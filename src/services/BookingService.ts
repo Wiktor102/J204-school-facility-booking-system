@@ -1,18 +1,9 @@
 import type { BookingRepository, BookingWithNames } from '../repositories/BookingRepository.js';
 import type { EquipmentRepository } from '../repositories/EquipmentRepository.js';
-import {
-  validate,
-  validateBookingDuration,
-  validateBookingTime,
-} from '../utils/validators.js';
+import { validate, validateBookingDuration, validateBookingTime } from '../utils/validators.js';
 import { AppError, ForbiddenError, ValidationAppError } from '../utils/errors.js';
-import type {
-  Booking,
-  DaySlots,
-  Equipment,
-  TimeSlot,
-  WeekView,
-} from '../types/models.js';
+import { BookingStatus } from '../types/models.js';
+import type { Booking, DaySlots, TimeSlot, WeekView } from '../types/models.js';
 import { getWeekRange, buildWeekDays, getDayName, formatDate } from '../utils/dateHelpers.js';
 
 function toMinutes(time: string): number {
@@ -44,7 +35,10 @@ function isCompletedBooking(booking: Booking): boolean {
 }
 
 export class BookingService {
-  constructor(private bookings: BookingRepository, private equipmentRepo: EquipmentRepository) {}
+  constructor(
+    private bookings: BookingRepository,
+    private equipmentRepo: EquipmentRepository,
+  ) {}
 
   async generateSlots(
     equipmentId: number,
@@ -60,10 +54,10 @@ export class BookingService {
     const blocks = await this.bookings.getBlockedSlots(equipmentId, date);
 
     const slots: TimeSlot[] = [];
-    const todayStr = formatDate(new Date());
+    const today = new Date();
+    const todayStr = formatDate(today);
 
     for (let hour = equipment.dailyStartHour; hour < equipment.dailyEndHour; hour++) {
-      const baseStart = minutesToTime(hour * 60);
       for (
         let duration = equipment.minDurationMinutes;
         duration <= equipment.maxDurationMinutes;
@@ -77,15 +71,16 @@ export class BookingService {
         const startTime = minutesToTime(startMinutes);
         const endTime = minutesToTime(endMinutes);
 
-        const hasBookingConflict = bookings.some((b) =>
-          overlaps(startTime, endTime, b.startTime, b.endTime) && b.status === 'active',
+        const hasBookingConflict = bookings.some(
+          (b) => overlaps(startTime, endTime, b.startTime, b.endTime) && b.status === 'active',
         );
 
         const blocked = blocks.some((block) =>
           overlaps(startTime, endTime, block.start_time, block.end_time),
         );
 
-        const isPast = date < todayStr || (date === todayStr && toMinutes(startTime) <= toMinutes(minutesToTime(new Date().getHours() * 60 + new Date().getMinutes())));
+        const nowMinutes = today.getHours() * 60 + today.getMinutes();
+        const isPast = date < todayStr || (date === todayStr && toMinutes(startTime) <= nowMinutes);
 
         const ownBooking = bookings.find(
           (b) => b.userId === currentUserId && overlaps(startTime, endTime, b.startTime, b.endTime),
@@ -168,7 +163,9 @@ export class BookingService {
     );
     const blocked = await this.bookings.getBlockedSlots(params.equipmentId, params.bookingDate);
 
-    const conflict = sameDayBookings.some((b) => overlaps(params.startTime, params.endTime, b.startTime, b.endTime));
+    const conflict = sameDayBookings.some((b) =>
+      overlaps(params.startTime, params.endTime, b.startTime, b.endTime),
+    );
     if (conflict) {
       throw new ValidationAppError('Ten termin jest już zajęty');
     }
@@ -186,7 +183,7 @@ export class BookingService {
       bookingDate: params.bookingDate,
       startTime: params.startTime,
       endTime: params.endTime,
-      status: 'active',
+      status: BookingStatus.ACTIVE,
     });
   }
 

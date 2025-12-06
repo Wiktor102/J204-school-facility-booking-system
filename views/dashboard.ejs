@@ -1,0 +1,80 @@
+<%- include('layouts/main', { pageTitle }) %>
+<main class="dashboard">
+  <section class="hero">
+    <div>
+      <p class="eyebrow">Twoje centrum dowodzenia</p>
+      <h1>Witaj ponownie, <%= currentUser?.firstName %>!</h1>
+      <p class="muted">
+        Zarządzaj rezerwacjami świetlicy, śledź aktywność kolegów i odkrywaj wolne sloty w sprzętach.
+      </p>
+      <div class="hero__stats">
+        <div>
+          <p class="hero__stat-number"><%= bookingCount %></p>
+          <p class="hero__stat-label">Aktywnych rezerwacji</p>
+        </div>
+        <div>
+          <p class="hero__stat-number"><%= equipmentSummaries.length %></p>
+          <p class="hero__stat-label">Dostępnych sprzętów</p>
+        </div>
+      </div>
+    </div>
+    <div class="hero__card">
+      <p>Potrzebujesz nowej rezerwacji?</p>
+      <a class="btn btn--primary" href="#equipment">Przejdź do listy</a>
+    </div>
+  </section>
+
+  <section class="panel" id="equipment">
+    <header class="panel__header">
+      <div>
+        <p class="eyebrow">Oferta świetlicy</p>
+        <h2>Sprzęt gotowy do rezerwacji</h2>
+      </div>
+    </header>
+    <div class="equipment-grid">
+      <% equipmentSummaries.forEach((summary) => { %>
+        <%- include('partials/equipmentCard', { equipment: summary.equipment, slots: summary.slots }) %>
+      <% }) %>
+    </div>
+  </section>
+
+  <section class="panel panel--split">
+    <div>
+      <header class="panel__header">
+        <p class="eyebrow">Ostatnie działania</p>
+        <h2>Moje ostatnie rezerwacje</h2>
+      </header>
+      <ul class="timeline">
+        <% if (!recentBookings.length) { %>
+          <li class="timeline__item">Nie masz jeszcze żadnych rezerwacji.</li>
+        <% } %>
+        <% recentBookings.forEach((booking) => { %>
+          <li class="timeline__item">
+            <strong><%= booking.equipmentName %></strong>
+            <span><%= booking.bookingDate.toLocaleDateString('pl-PL') %> • <%= booking.startTime %></span>
+          </li>
+        <% }) %>
+      </ul>
+    </div>
+    <div>
+      <header class="panel__header">
+        <p class="eyebrow">Co dzieje się teraz</p>
+        <h2>Aktywność społeczności</h2>
+      </header>
+      <ul class="activity">
+        <% activity.forEach((item) => { %>
+          <li>
+            <span class="activity__tag"><%= item.userName %></span>
+            <p>
+              zarezerwował(a)
+              <strong><%= item.equipmentName %></strong>
+              na <%= new Date(item.bookingDate).toLocaleDateString('pl-PL') %>
+              o <%= item.startTime %>
+            </p>
+          </li>
+        <% }) %>
+      </ul>
+    </div>
+  </section>
+</main>
+<%- include('partials/footer') %>

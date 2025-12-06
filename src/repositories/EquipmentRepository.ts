@@ -83,6 +83,9 @@ export class EquipmentRepository {
   }
 
   async toggleAvailability(id: number, isActive: boolean): Promise<void> {
-    await this.pool.query('UPDATE equipment SET is_active = ? WHERE id = ?', [isActive ? 1 : 0, id]);
+    await this.pool.query('UPDATE equipment SET is_active = ? WHERE id = ?', [
+      isActive ? 1 : 0,
+      id,
+    ]);
   }
 }

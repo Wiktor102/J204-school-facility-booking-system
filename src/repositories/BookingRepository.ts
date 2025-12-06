@@ -78,7 +78,11 @@ export class BookingRepository {
     return rows.map(mapBooking);
   }
 
-  async findWeekBookings(equipmentId: number, startDate: string, endDate: string): Promise<Booking[]> {
+  async findWeekBookings(
+    equipmentId: number,
+    startDate: string,
+    endDate: string,
+  ): Promise<Booking[]> {
     const [rows] = await this.pool.query<(BookingRow & RowDataPacket)[]>(
       `SELECT * FROM bookings WHERE equipment_id = ? AND booking_date BETWEEN ? AND ?`,
       [equipmentId, startDate, endDate],
@@ -87,7 +91,9 @@ export class BookingRepository {
   }
 
   async listUserBookings(userId: number): Promise<BookingWithNames[]> {
-    const [rows] = await this.pool.query<(BookingRow & RowDataPacket & { equipment_name: string })[]>(
+    const [rows] = await this.pool.query<
+      (BookingRow & RowDataPacket & { equipment_name: string })[]
+    >(
       `SELECT b.*, e.name as equipment_name
        FROM bookings b
        JOIN equipment e ON e.id = b.equipment_id
@@ -95,7 +101,11 @@ export class BookingRepository {
        ORDER BY b.booking_date DESC, b.start_time DESC`,
       [userId],
     );
-    return rows.map((row) => ({ ...mapBooking(row), equipmentName: row.equipment_name, userName: '' }));
+    return rows.map((row) => ({
+      ...mapBooking(row),
+      equipmentName: row.equipment_name,
+      userName: '',
+    }));
   }
 
   async recentActivity(limit = 5): Promise<BookingWithNames[]> {
@@ -220,7 +230,14 @@ export class BookingRepository {
     const [result] = await this.pool.query<ResultSetHeader>(
       `INSERT INTO blocked_slots (equipment_id, block_date, start_time, end_time, reason, created_by)
        VALUES (?, ?, ?, ?, ?, ?)`,
-      [data.equipmentId, data.blockDate, data.startTime, data.endTime, data.reason ?? null, data.createdBy],
+      [
+        data.equipmentId,
+        data.blockDate,
+        data.startTime,
+        data.endTime,
+        data.reason ?? null,
+        data.createdBy,
+      ],
     );
     return result.insertId;
   }

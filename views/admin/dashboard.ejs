@@ -1,0 +1,118 @@
+<%- include('../layouts/main', { pageTitle }) %>
+<main class="admin-view">
+  <section class="panel">
+    <header class="panel__header">
+      <div>
+        <p class="eyebrow">Statystyki</p>
+        <h1>Panel administratora</h1>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-pill">
+          <p>Aktywne sprzęty</p>
+          <strong><%= stats.activeEquipment %></strong>
+        </div>
+        <div class="stat-pill">
+          <p>Łączna liczba rezerwacji</p>
+          <strong><%= stats.totalBookings %></strong>
+        </div>
+      </div>
+    </header>
+    <% if (typeof formError !== 'undefined') { %>
+      <div class="alert alert--danger"><%= formError %></div>
+    <% } %>
+    <div class="admin-grid">
+      <form class="form-card" method="post" action="/admin/equipment">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <h2>Dodaj nowy sprzęt</h2>
+        <label>Nazwa
+          <input type="text" name="name" required />
+        </label>
+        <label>Lokalizacja
+          <input type="text" name="location" required />
+        </label>
+        <label>Ikona (słowo kluczowe)
+          <input type="text" name="iconName" required />
+        </label>
+        <label>Kolor akcentu (HEX)
+          <input type="text" name="accentColor" value="#00d9ff" required />
+        </label>
+        <label>Start godziny
+          <input type="number" name="dailyStartHour" min="0" max="23" value="14" />
+        </label>
+        <label>Koniec godziny
+          <input type="number" name="dailyEndHour" min="0" max="23" value="22" />
+        </label>
+        <label>Minimalny czas (min)
+          <input type="number" name="minDurationMinutes" value="60" />
+        </label>
+        <label>Maksymalny czas (min)
+          <input type="number" name="maxDurationMinutes" value="120" />
+        </label>
+        <button class="btn btn--primary" type="submit">Zapisz</button>
+      </form>
+      <div class="equipment-table">
+        <h2>Zarządzanie sprzętem</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Nazwa</th>
+              <th>Lokalizacja</th>
+              <th>Godziny</th>
+              <th>Status</th>
+              <th>Akcje</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% equipment.forEach((item) => { %>
+              <tr>
+                <td><%= item.name %></td>
+                <td><%= item.location %></td>
+                <td><%= item.dailyStartHour %>:00 - <%= item.dailyEndHour %>:00</td>
+                <td>
+                  <% if (item.isActive) { %>
+                    <span class="badge badge--success">Aktywny</span>
+                  <% } else { %>
+                    <span class="badge badge--muted">Wyłączony</span>
+                  <% } %>
+                </td>
+                <td>
+                  <form method="post" action="/admin/equipment/<%= item.id %>?_method=PATCH" class="inline-form">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                    <input type="hidden" name="isActive" value="<%= !item.isActive %>" />
+                    <button class="btn btn--ghost" type="submit">
+                      <%= item.isActive ? 'Wyłącz' : 'Włącz' %>
+                    </button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <header class="panel__header">
+      <div>
+        <p class="eyebrow">Blokady</p>
+        <h2>Zarządzaj blokadami terminów</h2>
+      </div>
+    </header>
+    <form class="form-inline" method="post" action="/admin/blocked-slots">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+      <select name="equipmentId" required>
+        <% equipment.forEach((item) => { %>
+          <option value="<%= item.id %>"><%= item.name %></option>
+        <% }) %>
+      </select>
+      <input type="date" name="blockDate" required />
+      <input type="time" name="startTime" required />
+      <input type="time" name="endTime" required />
+      <input type="text" name="reason" placeholder="Powód" />
+      <button class="btn btn--ghost" type="submit">Dodaj blokadę</button>
+    </form>
+    <p class="muted">Wyświetlanie istniejących blokad dostępne w module nadzoru rezerwacji.</p>
+  </section>
+</main>
+<%- include('../partials/footer') %>

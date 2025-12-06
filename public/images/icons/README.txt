@@ -1,0 +1,1 @@
+Umieść tutaj niestandardowe ikony SVG używane w kartach sprzętów.

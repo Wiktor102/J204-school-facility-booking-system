@@ -1,0 +1,73 @@
+<%- include('layouts/main', { pageTitle }) %>
+<main class="calendar-view" data-equipment-id="<%= equipment.id %>">
+  <section class="equipment-hero">
+    <div class="equipment-hero__info">
+      <p class="eyebrow">Planowanie sesji</p>
+      <h1><%= equipment.name %></h1>
+      <p class="muted"><%= equipment.location %></p>
+      <ul class="equipment-hero__meta">
+        <li>Godziny pracy: <strong><%= equipment.dailyStartHour %>:00 - <%= equipment.dailyEndHour %>:00</strong></li>
+        <li>Minimalny czas: <strong><%= equipment.minDurationMinutes %> min</strong></li>
+        <li>Maksymalny czas: <strong><%= equipment.maxDurationMinutes %> min</strong></li>
+      </ul>
+    </div>
+    <div class="equipment-hero__actions">
+      <label for="duration-picker">Długość sesji</label>
+      <select id="duration-picker" class="form-select">
+        <% durationOptions.forEach((option) => { %>
+          <option value="<%= option %>"><%= option %> min</option>
+        <% }) %>
+      </select>
+      <p class="muted">Wybierz interesujący slot, aby potwierdzić rezerwację.</p>
+    </div>
+  </section>
+
+  <section class="calendar-nav">
+    <a class="btn btn--ghost" href="/equipment/<%= equipment.id %>/calendar?date=<%= new Date(weekView.weekStart.getTime() - 7 * 86400000).toISOString().slice(0, 10) %>">Poprzedni tydzień</a>
+    <div>
+      <h2>Tydzień <%= new Date(selectedDate).toLocaleDateString('pl-PL') %></h2>
+      <p class="muted"><%= weekView.weekStart.toLocaleDateString('pl-PL') %> - <%= weekView.weekEnd.toLocaleDateString('pl-PL') %></p>
+    </div>
+    <a class="btn btn--ghost" href="/equipment/<%= equipment.id %>/calendar?date=<%= new Date(weekView.weekStart.getTime() + 7 * 86400000).toISOString().slice(0, 10) %>">Następny tydzień</a>
+  </section>
+
+  <section class="calendar-grid">
+    <% weekView.days.forEach((day) => { %>
+      <div class="calendar-column">
+        <header>
+          <p class="calendar-column__day"><%= day.dayName %></p>
+          <p class="calendar-column__date"><%= day.date.toLocaleDateString('pl-PL') %></p>
+        </header>
+        <div class="calendar-column__slots">
+          <% day.slots.forEach((slot) => { %>
+            <button
+              class="slot <%= slot.isOwnBooking ? 'slot--own' : '' %> <%= !slot.isAvailable ? 'slot--disabled' : 'slot--available' %>"
+              data-date="<%= slot.date.toISOString().slice(0, 10) %>"
+              data-start="<%= slot.startTime %>"
+              data-end="<%= slot.endTime %>"
+              <%= slot.isAvailable ? '' : 'disabled' %>
+            >
+              <span><%= slot.startTime %> - <%= slot.endTime %></span>
+              <% if (slot.isOwnBooking) { %>
+                <small>Twoja rezerwacja</small>
+              <% } %>
+            </button>
+          <% }) %>
+        </div>
+      </div>
+    <% }) %>
+  </section>
+
+  <section class="calendar-tips">
+    <p>Po kliknięciu w slot pojawi się panel potwierdzający. Możesz anulować rezerwację do dowolnego momentu.</p>
+  </section>
+
+  <form id="booking-form" method="post" action="/bookings" data-csrf="<%= csrfToken %>">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+    <input type="hidden" name="equipmentId" value="<%= equipment.id %>" />
+    <input type="hidden" name="bookingDate" />
+    <input type="hidden" name="startTime" />
+    <input type="hidden" name="duration" />
+  </form>
+</main>
+<%- include('partials/footer') %>

@@ -1,8 +1,8 @@
 import session from 'express-session';
-import type { Pool } from 'mysql2/promise';
+import type { Pool, RowDataPacket } from 'mysql2/promise';
 import crypto from 'crypto';
 
-interface StoredSessionRow {
+interface StoredSessionRow extends RowDataPacket {
   session_id: string;
   data: string;
   expires_at: Date;

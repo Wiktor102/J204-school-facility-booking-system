@@ -1,12 +1,15 @@
-import type { UserRole } from './models.js';
+import type { UserRole } from './models';
+
+declare module 'express-session' {
+  interface SessionData {
+    userId?: number;
+    userRole?: UserRole;
+    csrfToken?: string;
+  }
+}
 
 declare global {
   namespace Express {
-    interface SessionData {
-      userId?: number;
-      userRole?: UserRole;
-      csrfToken?: string;
-    }
     interface Request {
       currentUser?: {
         id: number;

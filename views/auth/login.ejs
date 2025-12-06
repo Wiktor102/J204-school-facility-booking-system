@@ -1,0 +1,58 @@
+<%- include('../layouts/main', { pageTitle }) %>
+<main class="auth-view">
+  <section class="auth-panel">
+    <header>
+      <p class="eyebrow">Witaj ponownie</p>
+      <h1>Zaloguj się do panelu</h1>
+      <p class="muted">Użyj szkolnego adresu e-mail, aby zarządzać rezerwacjami.</p>
+    </header>
+    <% if (viewModel.errors.length) { %>
+      <div class="alert alert--danger">
+        <p><%= viewModel.errors[0] %></p>
+      </div>
+    <% } %>
+    <form method="post" action="/login" class="form-card">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+      <div class="form-field">
+        <label for="login-email">Adres e-mail</label>
+        <input id="login-email" type="email" name="email" required value="<%= viewModel.formData.email || '' %>" />
+      </div>
+      <div class="form-field">
+        <label for="login-password">Hasło</label>
+        <input id="login-password" type="password" name="password" required />
+      </div>
+      <button class="btn btn--primary" type="submit">Zaloguj się</button>
+    </form>
+  </section>
+  <section class="auth-panel auth-panel--secondary">
+    <header>
+      <p class="eyebrow">Nowy użytkownik?</p>
+      <h2>Utwórz konto uczniowskie</h2>
+      <p class="muted">
+        Konto pozwala na szybkie rezerwowanie sprzętu w świetlicy oraz podgląd historii sesji.
+      </p>
+    </header>
+    <form method="post" action="/register" class="form-card">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+      <div class="form-field">
+        <label for="register-first-name">Imię</label>
+        <input id="register-first-name" type="text" name="firstName" required value="<%= viewModel.formData.firstName || '' %>" />
+      </div>
+      <div class="form-field">
+        <label for="register-last-name">Nazwisko</label>
+        <input id="register-last-name" type="text" name="lastName" required value="<%= viewModel.formData.lastName || '' %>" />
+      </div>
+      <div class="form-field">
+        <label for="register-email">Adres e-mail</label>
+        <input id="register-email" type="email" name="email" required value="<%= viewModel.formData.email || '' %>" />
+      </div>
+      <div class="form-field">
+        <label for="register-password">Hasło</label>
+        <input id="register-password" type="password" name="password" required />
+        <p class="help-text">Minimum 8 znaków, wielka litera i cyfra.</p>
+      </div>
+      <button class="btn btn--ghost" type="submit">Załóż konto</button>
+    </form>
+  </section>
+</main>
+<%- include('../partials/footer') %>

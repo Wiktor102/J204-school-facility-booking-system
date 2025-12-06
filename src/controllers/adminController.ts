@@ -1,0 +1,161 @@
+import type { Request, Response, NextFunction } from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { AdminService } from '../services/AdminService.js';
+import { EquipmentRepository } from '../repositories/EquipmentRepository.js';
+import { ValidationAppError, AppError } from '../utils/errors.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export class AdminController {
+  constructor(
+    private adminService: AdminService,
+    private equipmentRepository: EquipmentRepository,
+  ) {}
+
+  dashboard = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const stats = await this.adminService.stats();
+      const equipment = await this.equipmentRepository.listAll();
+      res.render('admin/dashboard', {
+        pageTitle: 'Panel administratora',
+        stats,
+        equipment,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  createEquipment = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const payload = {
+        name: req.body?.name,
+        location: req.body?.location,
+        iconName: req.body?.iconName,
+        accentColor: req.body?.accentColor,
+        dailyStartHour: Number(req.body?.dailyStartHour ?? 14),
+        dailyEndHour: Number(req.body?.dailyEndHour ?? 22),
+        minDurationMinutes: Number(req.body?.minDurationMinutes ?? 60),
+        maxDurationMinutes: Number(req.body?.maxDurationMinutes ?? 120),
+      };
+      await this.adminService.addEquipment(payload);
+      res.redirect('/admin');
+    } catch (error) {
+      if (error instanceof ValidationAppError) {
+        res.status(400).render('admin/dashboard', {
+          pageTitle: 'Panel administratora',
+          stats: await this.adminService.stats(),
+          equipment: await this.equipmentRepository.listAll(),
+          formError: error.message,
+        });
+        return;
+      }
+      next(error);
+    }
+  };
+
+  updateEquipment = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const id = Number(req.params.id);
+      await this.adminService.updateEquipment(id, {
+        name: req.body?.name,
+        location: req.body?.location,
+        iconName: req.body?.iconName,
+        accentColor: req.body?.accentColor,
+        dailyStartHour: req.body?.dailyStartHour ? Number(req.body.dailyStartHour) : undefined,
+        dailyEndHour: req.body?.dailyEndHour ? Number(req.body.dailyEndHour) : undefined,
+        minDurationMinutes: req.body?.minDurationMinutes
+          ? Number(req.body.minDurationMinutes)
+          : undefined,
+        maxDurationMinutes: req.body?.maxDurationMinutes
+          ? Number(req.body.maxDurationMinutes)
+          : undefined,
+        isActive: req.body?.isActive !== undefined ? req.body.isActive === 'true' : undefined,
+      });
+      res.redirect('/admin');
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  createBlock = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      if (!req.currentUser) {
+        throw new AppError('Brak użytkownika', 401);
+      }
+      await this.adminService.createBlock({
+        equipmentId: Number(req.body?.equipmentId),
+        blockDate: req.body?.blockDate,
+        startTime: req.body?.startTime,
+        endTime: req.body?.endTime,
+        reason: req.body?.reason,
+        createdBy: req.currentUser.id,
+      });
+      res.redirect('/admin');
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  removeBlock = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const id = Number(req.params.id);
+      await this.adminService.removeBlock(id);
+      res.redirect('/admin');
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  cancelBooking = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const id = Number(req.params.id);
+      await this.adminService.cancelBooking(id);
+      res.redirect('/admin/bookings');
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  listBookings = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const filters = {
+        equipmentId: req.query.equipment ? Number(req.query.equipment) : undefined,
+        dateFrom: req.query.dateFrom ? String(req.query.dateFrom) : undefined,
+        dateTo: req.query.dateTo ? String(req.query.dateTo) : undefined,
+        student: req.query.student ? String(req.query.student) : undefined,
+        sort: (req.query.sort as 'date' | 'student' | 'equipment') ?? 'date',
+        order: (req.query.order as 'asc' | 'desc') ?? 'desc',
+        page: req.query.page ? Number(req.query.page) : 1,
+        pageSize: 20,
+      };
+      const { data, total } = await this.adminService.listBookings(filters);
+      const totalPages = Math.ceil(total / (filters.pageSize ?? 20));
+      res.render('admin/bookingOverseer', {
+        pageTitle: 'Nadzór rezerwacji',
+        bookings: data,
+        filters,
+        pagination: {
+          page: filters.page,
+          totalPages,
+          total,
+        },
+        equipment: await this.equipmentRepository.listAll(),
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  exportCsv = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const target = path.join(__dirname, '../../tmp', `export-${Date.now()}.csv`);
+      const filePath = await this.adminService.exportCsv(target);
+      res.download(filePath, 'rezerwacje.csv');
+    } catch (error) {
+      next(error);
+    }
+  };
+}

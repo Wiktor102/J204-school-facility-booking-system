@@ -1,0 +1,29 @@
+<header class="site-header">
+  <div class="brand">
+    <img src="/images/logo.png" alt="Logo szkoły" class="brand__logo" />
+    <div>
+      <p class="brand__eyebrow">Zespół Szkół nr 4</p>
+      <p class="brand__title">System rezerwacji strefy uczniowskiej</p>
+    </div>
+  </div>
+  <nav class="main-nav">
+    <% if (currentUser) { %>
+      <a href="/dashboard">Pulpit</a>
+      <a href="/my-bookings">Moje rezerwacje</a>
+      <% if (currentUser.role === 'admin') { %>
+        <a href="/admin">Administracja</a>
+      <% } %>
+    <% } %>
+  </nav>
+  <div class="user-chip">
+    <% if (currentUser) { %>
+      <div>
+        <p class="user-chip__name"><%= currentUser.firstName %> <%= currentUser.lastName %></p>
+        <p class="user-chip__role"><%= currentUser.role === 'admin' ? 'Administrator' : 'Uczeń' %></p>
+      </div>
+      <a class="btn btn--ghost" href="/logout">Wyloguj</a>
+    <% } else { %>
+      <a class="btn btn--primary" href="/login">Zaloguj się</a>
+    <% } %>
+  </div>
+</header>

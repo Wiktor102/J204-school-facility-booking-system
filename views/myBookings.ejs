@@ -1,0 +1,56 @@
+<%- include('layouts/main', { pageTitle }) %>
+<main class="bookings-view">
+  <section class="panel">
+    <header class="panel__header">
+      <div>
+        <p class="eyebrow">Podsumowanie</p>
+        <h1>Moje rezerwacje</h1>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-pill">
+          <p>Aktywne</p>
+          <strong><%= stats.active %></strong>
+        </div>
+        <div class="stat-pill">
+          <p>Zakończone</p>
+          <strong><%= stats.completed %></strong>
+        </div>
+        <div class="stat-pill">
+          <p>Anulowane</p>
+          <strong><%= stats.cancelled %></strong>
+        </div>
+      </div>
+    </header>
+    <div class="booking-list">
+      <% if (!bookings.length) { %>
+        <div class="empty-state">
+          <p>Nie masz jeszcze rezerwacji. Przejdź do kalendarza, aby zarezerwować sprzęt.</p>
+          <a class="btn btn--primary" href="/dashboard">Przeglądaj sprzęt</a>
+        </div>
+      <% } %>
+      <% bookings.forEach((booking) => { %>
+        <article class="booking-card" data-booking-id="<%= booking.id %>">
+          <div>
+            <p class="eyebrow"><%= booking.equipmentName %></p>
+            <h3><%= new Date(booking.bookingDate).toLocaleDateString('pl-PL') %> • <%= booking.startTime %> - <%= booking.endTime %></h3>
+          </div>
+          <div class="booking-card__status">
+            <% if (booking.status === 'cancelled') { %>
+              <span class="badge badge--danger">Anulowana</span>
+            <% } else if (booking.isCompleted) { %>
+              <span class="badge badge--muted">Zakończona</span>
+            <% } else { %>
+              <span class="badge badge--success">Aktywna</span>
+            <% } %>
+          </div>
+          <div class="booking-card__actions">
+            <% if (booking.status === 'active' && !booking.isCompleted) { %>
+              <button class="btn btn--ghost" data-cancel="<%= booking.id %>" data-csrf="<%= csrfToken %>">Anuluj</button>
+            <% } %>
+          </div>
+        </article>
+      <% }) %>
+    </div>
+  </section>
+</main>
+<%- include('partials/footer') %>

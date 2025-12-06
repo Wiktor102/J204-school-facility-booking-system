@@ -1,0 +1,85 @@
+@use 'variables' as *;
+
+.page-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 4vw;
+  background: $color-card-bg;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  &__logo {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    border: 2px solid $color-accent-cyan;
+  }
+
+  &__eyebrow {
+    font-size: 0.9rem;
+    color: $color-text-light;
+    margin: 0;
+  }
+
+  &__title {
+    font-family: $font-display;
+    font-size: 1.1rem;
+    margin: 0;
+  }
+}
+
+.main-nav {
+  display: flex;
+  gap: 1rem;
+  font-weight: 500;
+
+  a {
+    padding: 0.5rem 0.75rem;
+    border-radius: 999px;
+
+    &:hover {
+      background: rgba(15, 23, 42, 0.05);
+    }
+  }
+}
+
+.user-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  &__name {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  &__role {
+    margin: 0;
+    color: $color-text-light;
+    font-size: 0.85rem;
+  }
+}
+
+main {
+  flex: 1;
+  padding: 2rem 4vw 4rem;
+}
+
+.site-footer {
+  padding: 2rem 4vw;
+  background: $color-primary;
+  color: #fff;
+  text-align: center;
+}

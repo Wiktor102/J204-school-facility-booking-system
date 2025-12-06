@@ -1,14 +1,17 @@
 import { createObjectCsvWriter } from 'csv-writer';
 import fs from 'fs/promises';
 import path from 'path';
-import type { BookingRepository } from '../repositories/BookingRepository.js';
+import type { BookingRepository, BookingWithNames } from '../repositories/BookingRepository.js';
 import type { EquipmentRepository } from '../repositories/EquipmentRepository.js';
-import { AppError, ValidationAppError } from '../utils/errors.js';
+import { ValidationAppError } from '../utils/errors.js';
 import { validate, validateName } from '../utils/validators.js';
 import type { Equipment } from '../types/models.js';
 
 export class AdminService {
-  constructor(private bookings: BookingRepository, private equipmentRepo: EquipmentRepository) {}
+  constructor(
+    private bookings: BookingRepository,
+    private equipmentRepo: EquipmentRepository,
+  ) {}
 
   async addEquipment(data: {
     name: string;
@@ -66,7 +69,7 @@ export class AdminService {
     order?: 'asc' | 'desc';
     page?: number;
     pageSize?: number;
-  }): Promise<{ data: any[]; total: number; page: number; pageSize: number }> {
+  }): Promise<{ data: BookingWithNames[]; total: number; page: number; pageSize: number }> {
     const { bookings, total } = await this.bookings.listAllWithFilters(params);
     return { data: bookings, total, page: params.page ?? 1, pageSize: params.pageSize ?? 20 };
   }
@@ -91,7 +94,8 @@ export class AdminService {
     await writer.writeRecords(
       bookings.map((b) => ({
         ...b,
-        bookingDate: b.bookingDate instanceof Date ? b.bookingDate.toISOString().slice(0, 10) : b.bookingDate,
+        bookingDate:
+          b.bookingDate instanceof Date ? b.bookingDate.toISOString().slice(0, 10) : b.bookingDate,
       })),
     );
 
@@ -99,10 +103,10 @@ export class AdminService {
   }
 
   async stats(): Promise<{ totalBookings: number; activeEquipment: number }> {
-    const { bookings: all } = await this.bookings.listAllWithFilters({ page: 1, pageSize: 1 });
+    const { total } = await this.bookings.listAllWithFilters({ page: 1, pageSize: 1 });
     const equipment = await this.equipmentRepo.listActive();
     return {
-      totalBookings: all.length,
+      totalBookings: total,
       activeEquipment: equipment.length,
     };
   }
