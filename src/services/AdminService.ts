@@ -1,0 +1,109 @@
+import { createObjectCsvWriter } from 'csv-writer';
+import fs from 'fs/promises';
+import path from 'path';
+import type { BookingRepository } from '../repositories/BookingRepository.js';
+import type { EquipmentRepository } from '../repositories/EquipmentRepository.js';
+import { AppError, ValidationAppError } from '../utils/errors.js';
+import { validate, validateName } from '../utils/validators.js';
+import type { Equipment } from '../types/models.js';
+
+export class AdminService {
+  constructor(private bookings: BookingRepository, private equipmentRepo: EquipmentRepository) {}
+
+  async addEquipment(data: {
+    name: string;
+    location: string;
+    iconName: string;
+    accentColor: string;
+    dailyStartHour: number;
+    dailyEndHour: number;
+    minDurationMinutes: number;
+    maxDurationMinutes: number;
+  }): Promise<number> {
+    const validation = validate([
+      validateName(data.name, 'Nazwa'),
+      validateName(data.location, 'Lokalizacja'),
+    ]);
+    if (!validation.isValid) {
+      throw new ValidationAppError('Błędne dane sprzętu', validation.errors);
+    }
+    return this.equipmentRepo.create(data);
+  }
+
+  async updateEquipment(id: number, fields: Partial<Equipment>): Promise<void> {
+    await this.equipmentRepo.update(id, fields);
+  }
+
+  async toggleEquipment(id: number, active: boolean): Promise<void> {
+    await this.equipmentRepo.toggleAvailability(id, active);
+  }
+
+  async createBlock(data: {
+    equipmentId: number;
+    blockDate: string;
+    startTime: string;
+    endTime: string;
+    reason?: string;
+    createdBy: number;
+  }): Promise<number> {
+    return this.bookings.createBlockedSlot(data);
+  }
+
+  async removeBlock(id: number): Promise<void> {
+    await this.bookings.deleteBlockedSlot(id);
+  }
+
+  async cancelBooking(id: number): Promise<void> {
+    await this.bookings.cancel(id);
+  }
+
+  async listBookings(params: {
+    equipmentId?: number;
+    dateFrom?: string;
+    dateTo?: string;
+    student?: string;
+    sort?: 'date' | 'student' | 'equipment';
+    order?: 'asc' | 'desc';
+    page?: number;
+    pageSize?: number;
+  }): Promise<{ data: any[]; total: number; page: number; pageSize: number }> {
+    const { bookings, total } = await this.bookings.listAllWithFilters(params);
+    return { data: bookings, total, page: params.page ?? 1, pageSize: params.pageSize ?? 20 };
+  }
+
+  async exportCsv(filePath: string): Promise<string> {
+    const { bookings } = await this.bookings.listAllWithFilters({ page: 1, pageSize: 1000 });
+    const absolute = path.resolve(filePath);
+    await fs.mkdir(path.dirname(absolute), { recursive: true });
+    const writer = createObjectCsvWriter({
+      path: absolute,
+      header: [
+        { id: 'id', title: 'ID' },
+        { id: 'equipmentName', title: 'Sprzęt' },
+        { id: 'userName', title: 'Użytkownik' },
+        { id: 'bookingDate', title: 'Data' },
+        { id: 'startTime', title: 'Start' },
+        { id: 'endTime', title: 'Koniec' },
+        { id: 'status', title: 'Status' },
+      ],
+    });
+
+    await writer.writeRecords(
+      bookings.map((b) => ({
+        ...b,
+        bookingDate: b.bookingDate instanceof Date ? b.bookingDate.toISOString().slice(0, 10) : b.bookingDate,
+      })),
+    );
+
+    return absolute;
+  }
+
+  async stats(): Promise<{ totalBookings: number; activeEquipment: number }> {
+    const { bookings: all } = await this.bookings.listAllWithFilters({ page: 1, pageSize: 1 });
+    const equipment = await this.equipmentRepo.listActive();
+    return {
+      totalBookings: all.length,
+      activeEquipment: equipment.length,
+    };
+  }
+}
