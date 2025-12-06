@@ -55,7 +55,11 @@ async function seedDatabase() {
     await connection.query(
       `INSERT INTO equipment (name, location, icon_name, accent_color, daily_start_hour, daily_end_hour, min_duration_minutes, max_duration_minutes)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-       ON DUPLICATE KEY UPDATE name = VALUES(name), location = VALUES(location)`,
+       ON DUPLICATE KEY UPDATE 
+        name = VALUES(name), 
+        location = VALUES(location), 
+        icon_name = VALUES(icon_name), 
+        accent_color = VALUES(accent_color)`,
       [
         'Stół bilardowy',
         'Świetlica uczniowska, 2. piętro',
@@ -71,7 +75,11 @@ async function seedDatabase() {
     await connection.query(
       `INSERT INTO equipment (name, location, icon_name, accent_color, daily_start_hour, daily_end_hour, min_duration_minutes, max_duration_minutes)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-       ON DUPLICATE KEY UPDATE name = VALUES(name), location = VALUES(location)`,
+       ON DUPLICATE KEY UPDATE 
+        name = VALUES(name), 
+        location = VALUES(location), 
+        icon_name = VALUES(icon_name), 
+        accent_color = VALUES(accent_color)`,
       [
         'Kącik gamingowy PS5',
         'Świetlica uczniowska, 2. piętro',

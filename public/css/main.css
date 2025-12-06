@@ -173,6 +173,27 @@ main {
   gap: 2rem;
 }
 
+.icon {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-color: var(--accent);
+  mask-size: 32px;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-size: 32px;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+}
+.icon--gamepad {
+  mask-image: url("/images/icons/gamepad.svg");
+  -webkit-mask-image: url("/images/icons/gamepad.svg");
+}
+.icon--pool-table {
+  mask-image: url("/images/icons/pool-table.svg");
+  -webkit-mask-image: url("/images/icons/pool-table.svg");
+}
+
 .equipment-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
