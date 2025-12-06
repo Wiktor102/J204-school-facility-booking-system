@@ -27,6 +27,7 @@ export class DashboardController {
 				bookingDate: Date;
 				startTime: string;
 			}> = [];
+
 			if (user) {
 				const bookings = await this.bookingService.listUserBookings(user.id);
 				bookingCount = bookings.filter((b) => b.status === BookingStatus.ACTIVE && !b.isCompleted).length;
@@ -60,17 +61,16 @@ export class DashboardController {
 			const date = addDaysSafe(new Date(), offset);
 			const formatted = formatDate(date);
 			const daySlots = await this.bookingService.generateSlots(equipmentId, formatted, userId);
+
 			for (const slot of daySlots.slots) {
-				if (slot.isAvailable) {
-					slots.push({
-						date: formatted,
-						startTime: slot.startTime,
-						endTime: slot.endTime
-					});
-				}
-				if (slots.length === 3) {
-					break;
-				}
+				if (!slot.isAvailable) continue;
+				slots.push({
+					date: formatted,
+					startTime: slot.startTime,
+					endTime: slot.endTime
+				});
+
+				if (slots.length === 3) break;
 			}
 		}
 		return slots;
