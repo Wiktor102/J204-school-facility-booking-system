@@ -55,8 +55,8 @@ export class DashboardController {
 	private async loadUpcomingSlots(
 		equipmentId: number,
 		userId?: number
-	): Promise<Array<{ date: string; startTime: string; endTime: string }>> {
-		const slots: Array<{ date: string; startTime: string; endTime: string }> = [];
+	): Promise<Array<{ date: Date; startTime: string; endTime: string }>> {
+		const slots: Array<{ date: Date; startTime: string; endTime: string }> = [];
 		for (let offset = 0; offset < 7 && slots.length < 3; offset++) {
 			const date = addDaysSafe(new Date(), offset);
 			const formatted = formatDate(date);
@@ -65,7 +65,7 @@ export class DashboardController {
 			for (const slot of daySlots.slots) {
 				if (!slot.isAvailable) continue;
 				slots.push({
-					date: formatted,
+					date: date,
 					startTime: slot.startTime,
 					endTime: slot.endTime
 				});

@@ -1,4 +1,5 @@
 import { BookingStatus, type Booking } from "../types/models.js";
+import { normalizeTimeString } from "../utils/timeHelpers.js";
 
 export interface BookingRow {
 	id: number;
@@ -18,8 +19,8 @@ export function mapBooking(row: BookingRow): Booking {
 		userId: row.user_id,
 		equipmentId: row.equipment_id,
 		bookingDate: row.booking_date,
-		startTime: row.start_time,
-		endTime: row.end_time,
+		startTime: normalizeTimeString(row.start_time),
+		endTime: normalizeTimeString(row.end_time),
 		status: row.status,
 		createdAt: row.created_at,
 		cancelledAt: row.cancelled_at ?? undefined

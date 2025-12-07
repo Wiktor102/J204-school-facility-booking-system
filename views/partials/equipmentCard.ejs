@@ -17,7 +17,7 @@
       <% } else { %>
         <% slots.forEach((slot) => { %>
           <span class="chip">
-            <%= slot.date %> • <%= slot.startTime %> - <%= slot.endTime %>
+            <%= slot.date.toLocaleDateString('pl-PL') %> • <%= slot.startTime %> - <%= slot.endTime %>
           </span>
         <% }) %>
       <% } %>

@@ -34,7 +34,8 @@ if (calendar && bookingForm) {
 			return;
 		}
 		const date = slotButton.getAttribute("data-date");
-		const start = slotButton.getAttribute("data-start");
+		const startRaw = slotButton.getAttribute("data-start");
+		const start = startRaw ? startRaw.split(":").slice(0, 2).join(":") : startRaw;
 		pendingSlot = { date, start };
 		const display = modal.querySelector(".booking-modal__slot");
 		display.textContent = `${new Date(date).toLocaleDateString("pl-PL")} • ${start}`;

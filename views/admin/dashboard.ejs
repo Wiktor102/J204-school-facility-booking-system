@@ -109,8 +109,8 @@
         <% }) %>
       </select>
       <input type="date" name="blockDate" required />
-      <input type="time" name="startTime" required />
-      <input type="time" name="endTime" required />
+      <input type="time" name="startTime" required step="60" />
+      <input type="time" name="endTime" required step="60" />
       <input type="text" name="reason" placeholder="Powód" />
       <button class="btn btn--ghost" type="submit">Dodaj blokadę</button>
     </form>
