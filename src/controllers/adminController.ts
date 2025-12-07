@@ -14,7 +14,7 @@ export class AdminController {
 		private equipmentRepository: EquipmentRepository
 	) {}
 
-	dashboard = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
+	async dashboard(_req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
 			const stats = await this.adminService.stats();
 			const equipment = await this.equipmentRepository.listAll();
@@ -26,9 +26,9 @@ export class AdminController {
 		} catch (error) {
 			next(error);
 		}
-	};
+	}
 
-	createEquipment = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	async createEquipment(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
 			const payload = {
 				name: req.body?.name,
@@ -54,9 +54,9 @@ export class AdminController {
 			}
 			next(error);
 		}
-	};
+	}
 
-	updateEquipment = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	async updateEquipment(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
 			const id = Number(req.params.id);
 			await this.adminService.updateEquipment(id, {
@@ -74,9 +74,9 @@ export class AdminController {
 		} catch (error) {
 			next(error);
 		}
-	};
+	}
 
-	createBlock = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	async createBlock(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
 			if (!req.currentUser) {
 				throw new AppError("Brak użytkownika", 401);
@@ -93,9 +93,9 @@ export class AdminController {
 		} catch (error) {
 			next(error);
 		}
-	};
+	}
 
-	removeBlock = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	async removeBlock(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
 			const id = Number(req.params.id);
 			await this.adminService.removeBlock(id);
@@ -103,9 +103,9 @@ export class AdminController {
 		} catch (error) {
 			next(error);
 		}
-	};
+	}
 
-	cancelBooking = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	async cancelBooking(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
 			const id = Number(req.params.id);
 			await this.adminService.cancelBooking(id);
@@ -113,9 +113,9 @@ export class AdminController {
 		} catch (error) {
 			next(error);
 		}
-	};
+	}
 
-	listBookings = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	async listBookings(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
 			const filters = {
 				equipmentId: req.query.equipment ? Number(req.query.equipment) : undefined,
@@ -143,9 +143,9 @@ export class AdminController {
 		} catch (error) {
 			next(error);
 		}
-	};
+	}
 
-	exportCsv = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
+	async exportCsv(_req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
 			const target = path.join(__dirname, "../../tmp", `export-${Date.now()}.csv`);
 			const filePath = await this.adminService.exportCsv(target);
@@ -153,5 +153,5 @@ export class AdminController {
 		} catch (error) {
 			next(error);
 		}
-	};
+	}
 }

@@ -9,7 +9,7 @@ export class DashboardController {
 		private bookingService: BookingService
 	) {}
 
-	show = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	async show(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
 			const user = req.currentUser;
 			const equipment = await this.equipmentRepository.listActive();
@@ -48,5 +48,5 @@ export class DashboardController {
 		} catch (error) {
 			next(error);
 		}
-	};
+	}
 }

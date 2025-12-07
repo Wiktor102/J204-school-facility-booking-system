@@ -11,7 +11,7 @@ interface AuthViewModel {
 export class AuthController {
 	constructor(private authService: AuthService) {}
 
-	showLogin = (req: Request, res: Response): void => {
+	showLogin(req: Request, res: Response): void {
 		if (req.session?.userId) {
 			res.redirect("/dashboard");
 			return;
@@ -22,9 +22,9 @@ export class AuthController {
 			formData: {}
 		};
 		res.render("auth/login", { pageTitle: "Logowanie do systemu", viewModel });
-	};
+	}
 
-	login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	async login(req: Request, res: Response, next: NextFunction): Promise<void> {
 		const { email, password } = req.body ?? {};
 		try {
 			await this.authService.login(req, email, password);
@@ -44,9 +44,9 @@ export class AuthController {
 			}
 			next(error);
 		}
-	};
+	}
 
-	register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	async register(req: Request, res: Response, next: NextFunction): Promise<void> {
 		const { email, password, firstName, lastName } = req.body ?? {};
 		try {
 			await this.authService.register({ email, password, firstName, lastName });
@@ -67,14 +67,14 @@ export class AuthController {
 			}
 			next(error);
 		}
-	};
+	}
 
-	logout = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	async logout(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
 			await this.authService.logout(req);
 			res.redirect("/login");
 		} catch (error) {
 			next(error);
 		}
-	};
+	}
 }

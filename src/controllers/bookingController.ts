@@ -11,7 +11,7 @@ export class BookingController {
 		private equipmentRepository: EquipmentRepository
 	) {}
 
-	showCalendar = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	async showCalendar(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
 			const equipmentId = Number(req.params.id);
 			const equipment = await this.equipmentRepository.findById(equipmentId);
@@ -37,9 +37,9 @@ export class BookingController {
 		} catch (error) {
 			next(error);
 		}
-	};
+	}
 
-	create = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	async create(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
 			if (!req.currentUser) {
 				throw new AppError("Musisz być zalogowany", 401);
@@ -77,9 +77,9 @@ export class BookingController {
 			}
 			next(error);
 		}
-	};
+	}
 
-	cancel = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	async cancel(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
 			if (!req.currentUser) {
 				throw new AppError("Musisz być zalogowany", 401);
@@ -97,9 +97,9 @@ export class BookingController {
 			}
 			next(error);
 		}
-	};
+	}
 
-	userBookings = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	async userBookings(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
 			if (!req.currentUser) {
 				throw new AppError("Musisz być zalogowany", 401);
@@ -118,7 +118,7 @@ export class BookingController {
 		} catch (error) {
 			next(error);
 		}
-	};
+	}
 
 	private respond(req: Request, res: Response, payload: Record<string, unknown>, status = 200): void {
 		const isJson = req.headers["content-type"]?.includes("application/json");
