@@ -44,8 +44,8 @@
             <% } %>
           </div>
           <div class="booking-card__actions">
-            <% if (booking.status === 'active' && !booking.isCompleted) { %>
-              <button class="btn btn--ghost" data-cancel="<%= booking.id %>" data-csrf="<%= csrfToken %>">Anuluj</button>
+              <% if (booking.status === 'active' && !booking.isCompleted) { %>
+              <button class="btn btn--ghost" data-cancel="<%= booking.id %>">Anuluj</button>
             <% } %>
           </div>
         </article>

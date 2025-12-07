@@ -69,7 +69,6 @@
               <td>
                 <% if (booking.status === 'active') { %>
                   <form method="post" action="/admin/bookings/<%= booking.id %>?_method=DELETE">
-                    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                     <button class="btn btn--ghost" type="submit">Anuluj</button>
                   </form>
                 <% } %>

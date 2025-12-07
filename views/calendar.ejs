@@ -62,8 +62,7 @@
     <p>Po kliknięciu w slot pojawi się panel potwierdzający. Możesz anulować rezerwację do dowolnego momentu.</p>
   </section>
 
-  <form id="booking-form" method="post" action="/bookings" data-csrf="<%= csrfToken %>">
-    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+  <form id="booking-form" method="post" action="/bookings">
     <input type="hidden" name="equipmentId" value="<%= equipment.id %>" />
     <input type="hidden" name="bookingDate" />
     <input type="hidden" name="startTime" />

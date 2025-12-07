@@ -5,7 +5,7 @@ import { fileURLToPath } from "url";
 import { env } from "./config/environment.js";
 import { getPool } from "./config/database.js";
 import { MySQLSessionStore } from "./utils/sessionHelpers.js";
-import { attachCsrf } from "./middleware/auth.js";
+// CSRF middleware removed for demo purposes
 import { errorHandler } from "./middleware/errorHandler.js";
 import { registerRoutes } from "./routes/index.js";
 import { UserRepository } from "./repositories/UserRepository.js";
@@ -91,7 +91,7 @@ async function bootstrap() {
 		next();
 	});
 
-	app.use(attachCsrf);
+	// previously: app.use(attachCsrf); // removed for demo simplification
 
 	app.use(express.static(path.join(__dirname, "../public")));
 

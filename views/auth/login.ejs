@@ -12,7 +12,6 @@
       </div>
     <% } %>
     <form method="post" action="/login" class="form-card">
-      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
       <div class="form-field">
         <label for="login-email">Adres e-mail</label>
         <input id="login-email" type="email" name="email" required value="<%= viewModel.formData.email || '' %>" />
@@ -33,7 +32,6 @@
       </p>
     </header>
     <form method="post" action="/register" class="form-card">
-      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
       <div class="form-grid form-grid--compact">
         <div class="form-field">
           <label for="register-first-name">Imię</label>

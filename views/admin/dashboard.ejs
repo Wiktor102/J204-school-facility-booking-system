@@ -22,7 +22,6 @@
     <% } %>
     <div class="admin-grid">
       <form class="form-card" method="post" action="/admin/equipment">
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
         <h2>Dodaj nowy sprzęt</h2>
         <div class="form-grid">
           <label>Nazwa
@@ -81,7 +80,7 @@
                 </td>
                 <td>
                   <form method="post" action="/admin/equipment/<%= item.id %>?_method=PATCH" class="inline-form">
-                    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                    
                     <input type="hidden" name="isActive" value="<%= !item.isActive %>" />
                     <button class="btn btn--ghost" type="submit">
                       <%= item.isActive ? 'Wyłącz' : 'Włącz' %>
@@ -104,7 +103,6 @@
       </div>
     </header>
     <form class="form-inline" method="post" action="/admin/blocked-slots">
-      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
       <select name="equipmentId" required>
         <% equipment.forEach((item) => { %>
           <option value="<%= item.id %>"><%= item.name %></option>

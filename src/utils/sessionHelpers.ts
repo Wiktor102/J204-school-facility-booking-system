@@ -1,6 +1,5 @@
 import session from "express-session";
 import type { Pool, RowDataPacket } from "mysql2/promise";
-import crypto from "crypto";
 
 interface StoredSessionRow extends RowDataPacket {
 	session_id: string;
@@ -96,6 +95,4 @@ export class MySQLSessionStore extends session.Store {
 	}
 }
 
-export function generateCsrfToken(): string {
-	return crypto.randomBytes(24).toString("hex");
-}
+// CSRF token generation removed for this demo — session store remains unchanged.

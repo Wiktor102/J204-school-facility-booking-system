@@ -56,8 +56,7 @@ if (calendar && bookingForm) {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
-				"X-Requested-With": "XMLHttpRequest",
-				"X-CSRF-Token": bookingForm.dataset.csrf
+				"X-Requested-With": "XMLHttpRequest"
 			},
 			body: JSON.stringify(payload)
 		});
