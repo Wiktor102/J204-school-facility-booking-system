@@ -1,6 +1,6 @@
-// eslint.config.js
 import tseslint from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
+import eslintConfigPrettier from "eslint-config-prettier/flat";
 
 export default [
 	{
@@ -14,15 +14,8 @@ export default [
 		},
 		linterOptions: { reportUnusedDisableDirectives: true },
 		rules: {
-			"no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
-			"no-console": ["warn", { allow: ["warn", "error"] }],
-			semi: ["error", "always"],
-			quotes: ["error", "single", { avoidEscape: true }],
-			indent: ["error", 2],
-			"comma-dangle": ["error", "always-multiline"],
-			eqeqeq: ["error", "always"],
-			curly: ["error", "all"],
-			"brace-style": ["error", "1tbs"]
+			"no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+			eqeqeq: ["warn", "always"]
 		}
 	},
 	{
@@ -31,7 +24,7 @@ export default [
 			parser: tsParser,
 			sourceType: "module",
 			parserOptions: {
-				project: "./tsconfig.json",
+				projectService: true,
 				tsconfigRootDir: import.meta.dirname
 			}
 		},
@@ -39,12 +32,14 @@ export default [
 			"@typescript-eslint": tseslint
 		},
 		rules: {
+			...(tseslint.configs?.recommended?.rules ?? {}),
+
+			// Disable base rule and enable plugin rule for unused vars (TypeScript-specific)
 			"no-unused-vars": "off",
-			quotes: "off",
-			"comma-dangle": "off",
-			"@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
-			"@typescript-eslint/explicit-function-return-types": "warn",
+			"@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+
 			"@typescript-eslint/no-explicit-any": "error"
 		}
-	}
+	},
+	eslintConfigPrettier
 ];
