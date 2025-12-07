@@ -1,115 +1,103 @@
-@use 'variables';
-@use 'mixins';
-@use 'reset';
-@use 'layout';
-@use 'components';
+@use "variables";
+@use "mixins";
+@use "reset";
+@use "layout";
+@use "forms";
+@use "components";
 
 .auth-view {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 2rem;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+	gap: 2rem;
 }
 
 .auth-panel {
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 1.5rem;
-  padding: 2rem;
-  @include mixins.card-shadow;
+	background: rgba(255, 255, 255, 0.9);
+	border-radius: 1.5rem;
+	padding: 2rem;
+	@include mixins.card-shadow;
 
-  &--secondary {
-    border: 1px dashed rgba(15, 23, 42, 0.2);
-  }
+	&--secondary {
+		border: 1px dashed rgba(15, 23, 42, 0.2);
+	}
 }
 
 .muted {
-  color: variables.$color-text-light;
+	color: variables.$color-text-light;
 }
 
 .stats-grid {
-  display: flex;
-  gap: 1rem;
+	display: flex;
+	gap: 1rem;
 }
 
 .stat-pill {
-  padding: 0.75rem 1.25rem;
-  border-radius: 1rem;
-  background: rgba(26, 35, 50, 0.06);
+	padding: 0.75rem 1.25rem;
+	border-radius: 1rem;
+	background: rgba(26, 35, 50, 0.06);
 }
 
 .calendar-column__slots {
-  scrollbar-width: thin;
+	scrollbar-width: thin;
 }
 
 .empty-state {
-  text-align: center;
-  padding: 2rem;
-  border: 2px dashed rgba(26, 35, 50, 0.2);
-  border-radius: 1.5rem;
+	text-align: center;
+	padding: 2rem;
+	border: 2px dashed rgba(26, 35, 50, 0.2);
+	border-radius: 1.5rem;
 }
 
 .admin-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2rem;
-}
-
-.filter-bar {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 1rem;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	gap: 2rem;
 }
 
 .booking-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.form-inline {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  align-items: center;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
 }
 
 .error-view {
-  text-align: center;
-  padding: 5rem 0;
+	text-align: center;
+	padding: 5rem 0;
 }
 
 .booking-modal {
-  position: fixed;
-  right: 2rem;
-  bottom: 2rem;
-  background: #fff;
-  border-radius: 1.25rem;
-  width: min(340px, calc(100% - 2rem));
-  box-shadow: 0 30px 70px rgba(15, 23, 42, 0.25);
-  transform: translateY(0);
-  transition:
-    opacity 0.3s ease,
-    transform 0.3s ease;
-  padding: 1.5rem;
+	position: fixed;
+	right: 2rem;
+	bottom: 2rem;
+	background: #fff;
+	border-radius: 1.25rem;
+	width: min(340px, calc(100% - 2rem));
+	box-shadow: 0 30px 70px rgba(15, 23, 42, 0.25);
+	transform: translateY(0);
+	transition:
+		opacity 0.3s ease,
+		transform 0.3s ease;
+	padding: 1.5rem;
 
-  &.is-hidden {
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(40px);
-  }
+	&.is-hidden {
+		opacity: 0;
+		pointer-events: none;
+		transform: translateY(40px);
+	}
 
-  &__title {
-    margin: 0 0 0.35rem;
-    font-weight: 600;
-  }
+	&__title {
+		margin: 0 0 0.35rem;
+		font-weight: 600;
+	}
 
-  &__slot {
-    margin: 0 0 1rem;
-    color: variables.$color-text-light;
-  }
+	&__slot {
+		margin: 0 0 1rem;
+		color: variables.$color-text-light;
+	}
 
-  &__actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.5rem;
-  }
+	&__actions {
+		display: flex;
+		justify-content: flex-end;
+		gap: 0.5rem;
+	}
 }

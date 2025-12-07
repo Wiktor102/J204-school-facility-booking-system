@@ -34,13 +34,15 @@
     </header>
     <form method="post" action="/register" class="form-card">
       <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-      <div class="form-field">
-        <label for="register-first-name">Imię</label>
-        <input id="register-first-name" type="text" name="firstName" required value="<%= viewModel.formData.firstName || '' %>" />
-      </div>
-      <div class="form-field">
-        <label for="register-last-name">Nazwisko</label>
-        <input id="register-last-name" type="text" name="lastName" required value="<%= viewModel.formData.lastName || '' %>" />
+      <div class="form-grid form-grid--compact">
+        <div class="form-field">
+          <label for="register-first-name">Imię</label>
+          <input id="register-first-name" type="text" name="firstName" required value="<%= viewModel.formData.firstName || '' %>" />
+        </div>
+        <div class="form-field">
+          <label for="register-last-name">Nazwisko</label>
+          <input id="register-last-name" type="text" name="lastName" required value="<%= viewModel.formData.lastName || '' %>" />
+        </div>
       </div>
       <div class="form-field">
         <label for="register-email">Adres e-mail</label>

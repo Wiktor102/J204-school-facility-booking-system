@@ -24,30 +24,34 @@
       <form class="form-card" method="post" action="/admin/equipment">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
         <h2>Dodaj nowy sprzęt</h2>
-        <label>Nazwa
-          <input type="text" name="name" required />
-        </label>
-        <label>Lokalizacja
-          <input type="text" name="location" required />
-        </label>
-        <label>Ikona (słowo kluczowe)
-          <input type="text" name="iconName" required />
-        </label>
-        <label>Kolor akcentu (HEX)
-          <input type="text" name="accentColor" value="#00d9ff" required />
-        </label>
-        <label>Start godziny
-          <input type="number" name="dailyStartHour" min="0" max="23" value="14" />
-        </label>
-        <label>Koniec godziny
-          <input type="number" name="dailyEndHour" min="0" max="23" value="22" />
-        </label>
-        <label>Minimalny czas (min)
-          <input type="number" name="minDurationMinutes" value="60" />
-        </label>
-        <label>Maksymalny czas (min)
-          <input type="number" name="maxDurationMinutes" value="120" />
-        </label>
+        <div class="form-grid">
+          <label>Nazwa
+            <input type="text" name="name" required />
+          </label>
+          <label>Lokalizacja
+            <input type="text" name="location" required />
+          </label>
+          <label>Ikona (słowo kluczowe)
+            <input type="text" name="iconName" required />
+          </label>
+          <label>Kolor akcentu (HEX)
+            <input type="text" name="accentColor" value="#00d9ff" required />
+          </label>
+        </div>
+        <div class="form-grid form-grid--compact">
+          <label>Start godziny
+            <input type="number" name="dailyStartHour" min="0" max="23" value="14" />
+          </label>
+          <label>Koniec godziny
+            <input type="number" name="dailyEndHour" min="0" max="23" value="22" />
+          </label>
+          <label>Minimalny czas (min)
+            <input type="number" name="minDurationMinutes" value="60" />
+          </label>
+          <label>Maksymalny czas (min)
+            <input type="number" name="maxDurationMinutes" value="120" />
+          </label>
+        </div>
         <button class="btn btn--primary" type="submit">Zapisz</button>
       </form>
       <div class="equipment-table">

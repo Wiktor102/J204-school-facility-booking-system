@@ -17,8 +17,10 @@
           </option>
         <% }) %>
       </select>
-      <input type="date" name="dateFrom" value="<%= filters.dateFrom || '' %>" />
-      <input type="date" name="dateTo" value="<%= filters.dateTo || '' %>" />
+      <div class="form-grid form-grid--compact">
+        <input type="date" name="dateFrom" value="<%= filters.dateFrom || '' %>" />
+        <input type="date" name="dateTo" value="<%= filters.dateTo || '' %>" />
+      </div>
       <input type="text" name="student" placeholder="Uczeń" value="<%= filters.student || '' %>" />
       <select name="sort">
         <option value="date" <%= filters.sort === 'date' ? 'selected' : '' %>>Data</option>
