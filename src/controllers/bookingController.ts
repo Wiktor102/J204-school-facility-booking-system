@@ -121,12 +121,9 @@ export class BookingController {
 	};
 
 	private respond(req: Request, res: Response, payload: Record<string, unknown>, status = 200): void {
-		const wantsJson =
-			req.headers["x-requested-with"] === "XMLHttpRequest" ||
-			req.headers["accept"]?.includes("application/json") ||
-			req.headers["content-type"]?.includes("application/json");
+		const isJson = req.headers["content-type"]?.includes("application/json");
 
-		if (wantsJson) {
+		if (isJson) {
 			res.status(status).json(payload);
 			return;
 		}

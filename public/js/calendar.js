@@ -55,7 +55,7 @@ if (calendar && bookingForm) {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
-				"X-Requested-With": "XMLHttpRequest"
+				Accept: "application/json"
 			},
 			body: JSON.stringify(payload)
 		});

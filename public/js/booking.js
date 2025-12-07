@@ -13,7 +13,7 @@ cancelButtons.forEach((button) => {
 			method: "DELETE",
 			headers: {
 				"Content-Type": "application/json",
-				"X-Requested-With": "XMLHttpRequest"
+				Accept: "application/json"
 			},
 			body: JSON.stringify({})
 		});
