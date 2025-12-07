@@ -11,17 +11,6 @@
       <li>Godziny: <strong><%= equipment.dailyStartHour %>:00 - <%= equipment.dailyEndHour %>:00</strong></li>
       <li>Czas: <strong><%= equipment.minDurationMinutes %> - <%= equipment.maxDurationMinutes %> min</strong></li>
     </ul>
-    <div class="equipment-card__slots">
-      <% if (slots.length === 0) { %>
-        <p>Brak wolnych terminów w tym tygodniu</p>
-      <% } else { %>
-        <% slots.forEach((slot) => { %>
-          <span class="chip">
-            <%= slot.date.toLocaleDateString('pl-PL') %> • <%= slot.startTime %> - <%= slot.endTime %>
-          </span>
-        <% }) %>
-      <% } %>
-    </div>
     <a class="btn btn--primary" href="/equipment/<%= equipment.id %>/calendar">Zobacz kalendarz</a>
   </div>
 </article>

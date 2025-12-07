@@ -138,20 +138,6 @@
 		border-radius: 20px;
 		background: rgba(0, 0, 0, 0.05);
 	}
-
-	&__slots {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
-		margin: 1rem 0;
-	}
-}
-
-.chip {
-	padding: 0.15rem 0.75rem;
-	border-radius: 999px;
-	background: rgba(26, 35, 50, 0.08);
-	font-size: 0.85rem;
 }
 
 .timeline,
