@@ -4,7 +4,9 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { env } from "./config/environment.js";
 import { getPool } from "./config/database.js";
-import { MySQLSessionStore } from "./utils/sessionHelpers.js";
+// NOTE: For this demo project we use the default in-memory session store
+//       which is fine for local development and smaller demos.
+//       Do NOT use the MemoryStore in production (use Redis, MySQL store, etc.).
 // CSRF middleware removed for demo purposes
 import { errorHandler } from "./middleware/errorHandler.js";
 import { registerRoutes } from "./routes/index.js";
@@ -67,7 +69,6 @@ async function bootstrap() {
 			secret: env.session.secret,
 			resave: false,
 			saveUninitialized: false,
-			store: new MySQLSessionStore(pool),
 			cookie: {
 				httpOnly: true,
 				maxAge: env.session.maxAge,

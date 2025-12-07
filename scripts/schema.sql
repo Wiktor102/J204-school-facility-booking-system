@@ -56,10 +56,3 @@ CREATE TABLE IF NOT EXISTS blocked_slots (
   FOREIGN KEY (created_by) REFERENCES users(id),
   INDEX idx_equipment_date (equipment_id, block_date)
 );
-
-CREATE TABLE IF NOT EXISTS sessions (
-  session_id VARCHAR(255) PRIMARY KEY,
-  data JSON NOT NULL,
-  expires_at DATETIME NOT NULL,
-  INDEX idx_expires (expires_at)
-);

@@ -94,5 +94,3 @@ export class MySQLSessionStore extends session.Store {
 		}
 	}
 }
-
-// CSRF token generation removed for this demo — session store remains unchanged.
