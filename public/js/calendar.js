@@ -43,9 +43,7 @@ if (calendar && bookingForm) {
 	});
 
 	modal.querySelector("[data-confirm]").addEventListener("click", async () => {
-		if (!pendingSlot) {
-			return;
-		}
+		if (!pendingSlot) return;
 		const duration = durationPicker ? durationPicker.value : "60";
 		bookingForm.elements.namedItem("bookingDate").value = pendingSlot.date;
 		bookingForm.elements.namedItem("startTime").value = pendingSlot.start;
@@ -61,10 +59,24 @@ if (calendar && bookingForm) {
 			},
 			body: JSON.stringify(payload)
 		});
+
 		if (response.ok) {
 			window.location.href = "/my-bookings";
-		} else {
-			alert("Nie udało się utworzyć rezerwacji.");
+			return;
 		}
+
+		let json = null;
+		try {
+			json = await response.json();
+		} catch (e) {
+			// ignore
+		}
+
+		if (response.status === 401) {
+			window.location.href = "/login";
+			return;
+		}
+
+		alert(json?.message ?? "Nie udało się utworzyć rezerwacji.");
 	});
 }
