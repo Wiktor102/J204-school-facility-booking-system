@@ -4,6 +4,6 @@ import { requireAuth } from "../middleware/auth.js";
 
 export function createDashboardRouter(controller: DashboardController): Router {
 	const router = Router();
-	router.get("/dashboard", requireAuth, controller.show);
+	router.get("/dashboard", requireAuth, controller.show.bind(controller));
 	return router;
 }
