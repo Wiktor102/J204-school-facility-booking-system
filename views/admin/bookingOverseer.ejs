@@ -46,9 +46,14 @@
             <th></th>
           </tr>
         </thead>
-        <tbody>
-          <% if (!bookings.length) { %>
-            <tr>
+                  <button
+                    class="btn btn--ghost"
+                    type="button"
+                    data-admin-cancel-booking
+                    data-booking-id="<%= booking.id %>"
+                  >
+                    Anuluj
+                  </button>
               <td colspan="7">Brak wyników dla zadanych filtrów.</td>
             </tr>
           <% } %>
@@ -68,9 +73,13 @@
               </td>
               <td>
                 <% if (booking.status === 'active') { %>
-                  <form method="post" action="/admin/bookings/<%= booking.id %>?_method=DELETE">
-                    <button class="btn btn--ghost" type="submit">Anuluj</button>
-                  </form>
+                  <button
+                    class="btn btn--ghost js-booking-cancel"
+                    type="button"
+                    data-booking-id="<%= booking.id %>"
+                  >
+                    Anuluj
+                  </button>
                 <% } %>
               </td>
             </tr>

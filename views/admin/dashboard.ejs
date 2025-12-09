@@ -79,13 +79,14 @@
                   <% } %>
                 </td>
                 <td>
-                  <form method="post" action="/admin/equipment/<%= item.id %>?_method=PATCH" class="inline-form">
-                    
-                    <input type="hidden" name="isActive" value="<%= !item.isActive %>" />
-                    <button class="btn btn--ghost" type="submit">
-                      <%= item.isActive ? 'Wyłącz' : 'Włącz' %>
-                    </button>
-                  </form>
+                  <button
+                    class="btn btn--ghost js-equipment-toggle"
+                    type="button"
+                    data-equipment-id="<%= item.id %>"
+                    data-next-active="<%= !item.isActive %>"
+                  >
+                    <%= item.isActive ? 'Wyłącz' : 'Włącz' %>
+                  </button>
                 </td>
               </tr>
             <% }) %>

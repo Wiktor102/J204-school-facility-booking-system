@@ -59,19 +59,39 @@ export class AdminController {
 	async updateEquipment(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
 			const id = Number(req.params.id);
-			await this.adminService.updateEquipment(id, {
+			const expectsJson = this.expectsJson(req);
+			const updated = await this.adminService.updateEquipment(id, {
 				name: req.body?.name,
 				location: req.body?.location,
 				iconName: req.body?.iconName,
 				accentColor: req.body?.accentColor,
-				dailyStartHour: req.body?.dailyStartHour ? Number(req.body.dailyStartHour) : undefined,
-				dailyEndHour: req.body?.dailyEndHour ? Number(req.body.dailyEndHour) : undefined,
-				minDurationMinutes: req.body?.minDurationMinutes ? Number(req.body.minDurationMinutes) : undefined,
-				maxDurationMinutes: req.body?.maxDurationMinutes ? Number(req.body.maxDurationMinutes) : undefined,
-				isActive: req.body?.isActive !== undefined ? req.body.isActive === "true" : undefined
+				dailyStartHour: this.toOptionalNumber(req.body?.dailyStartHour),
+				dailyEndHour: this.toOptionalNumber(req.body?.dailyEndHour),
+				minDurationMinutes: this.toOptionalNumber(req.body?.minDurationMinutes),
+				maxDurationMinutes: this.toOptionalNumber(req.body?.maxDurationMinutes),
+				isActive: this.toOptionalBoolean(req.body?.isActive)
 			});
+			if (!updated) {
+				if (expectsJson) {
+					res.status(404).json({ success: false, message: "Sprzęt nie istnieje." });
+					return;
+				}
+				throw new AppError("Sprzęt nie istnieje.", 404);
+			}
+			if (expectsJson) {
+				res.json({ success: true, equipment: updated });
+				return;
+			}
 			res.redirect("/admin");
 		} catch (error) {
+			if (this.expectsJson(req)) {
+				const status = error instanceof AppError ? error.statusCode : 500;
+				res.status(status).json({
+					success: false,
+					message: error instanceof Error ? error.message : "Błąd systemu"
+				});
+				return;
+			}
 			next(error);
 		}
 	}
@@ -109,10 +129,69 @@ export class AdminController {
 		try {
 			const id = Number(req.params.id);
 			await this.adminService.cancelBooking(id);
+			if (this.expectsJson(req)) {
+				res.json({ success: true, booking: { id, status: "cancelled" } });
+				return;
+			}
 			res.redirect("/admin/bookings");
 		} catch (error) {
+			if (this.expectsJson(req)) {
+				const status = error instanceof AppError ? error.statusCode : 500;
+				res.status(status).json({
+					success: false,
+					message: error instanceof Error ? error.message : "Błąd systemu"
+				});
+				return;
+			}
 			next(error);
 		}
+	}
+
+	private expectsJson(req: Request): boolean {
+		const acceptHeader = Array.isArray(req.headers.accept) ? req.headers.accept.join(",") : (req.headers.accept ?? "");
+		if (acceptHeader.includes("application/json")) {
+			return true;
+		}
+		const contentTypeHeader = req.headers["content-type"];
+		const contentType = Array.isArray(contentTypeHeader) ? contentTypeHeader.join(",") : (contentTypeHeader ?? "");
+		return contentType.includes("application/json");
+	}
+
+	private toOptionalNumber(value: unknown): number | undefined {
+		if (value === undefined || value === null || value === "") {
+			return undefined;
+		}
+		if (typeof value === "number") {
+			return Number.isFinite(value) ? value : undefined;
+		}
+		if (typeof value === "string") {
+			const trimmed = value.trim();
+			if (!trimmed) {
+				return undefined;
+			}
+			const parsed = Number(trimmed);
+			return Number.isFinite(parsed) ? parsed : undefined;
+		}
+		return undefined;
+	}
+
+	private toOptionalBoolean(value: unknown): boolean | undefined {
+		if (value === undefined || value === null || value === "") {
+			return undefined;
+		}
+		if (typeof value === "boolean") {
+			return value;
+		}
+		if (typeof value === "string") {
+			const normalized = value.trim().toLowerCase();
+			if (normalized === "true") {
+				return true;
+			}
+			if (normalized === "false") {
+				return false;
+			}
+		}
+		return undefined;
 	}
 
 	async listBookings(req: Request, res: Response, next: NextFunction): Promise<void> {

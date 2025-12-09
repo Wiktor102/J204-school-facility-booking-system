@@ -30,8 +30,9 @@ export class AdminService {
 		return this.equipmentRepo.create(data);
 	}
 
-	async updateEquipment(id: number, fields: Partial<Equipment>): Promise<void> {
+	async updateEquipment(id: number, fields: Partial<Equipment>): Promise<Equipment | null> {
 		await this.equipmentRepo.update(id, fields);
+		return this.equipmentRepo.findById(id);
 	}
 
 	async toggleEquipment(id: number, active: boolean): Promise<void> {

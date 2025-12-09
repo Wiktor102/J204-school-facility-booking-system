@@ -1,10 +1,9 @@
 import express from "express";
-import session from "express-session";
 import path from "path";
 import { fileURLToPath } from "url";
 import { env } from "./config/environment.js";
 import { getPool } from "./config/database.js";
-import { errorHandler } from "./middleware/errorHandler.js";
+import { registerMiddleware } from "./middleware/index.js";
 import { registerRoutes } from "./routes/index.js";
 import { UserRepository } from "./repositories/UserRepository.js";
 import { EquipmentRepository } from "./repositories/EquipmentRepository.js";
@@ -44,58 +43,11 @@ async function bootstrap() {
 	app.set("view engine", "ejs");
 	app.set("views", path.join(__dirname, "../views"));
 
-	app.use(express.urlencoded({ extended: true }));
-	app.use(express.json());
-
-	app.use((req, _res, next) => {
-		const bodyMethod = typeof req.body?._method === "string" ? req.body._method : undefined;
-		const queryMethod = typeof req.query?._method === "string" ? req.query._method : undefined;
-		const override = (bodyMethod || queryMethod || "").toUpperCase();
-		if (override === "DELETE" || override === "PATCH") {
-			req.method = override;
-		}
-		if (req.body?._method) {
-			delete req.body._method;
-		}
-		next();
-	});
-
-	app.use(
-		session({
-			secret: env.session.secret,
-			resave: false,
-			saveUninitialized: false,
-			cookie: {
-				httpOnly: true,
-				maxAge: env.session.maxAge,
-				sameSite: "lax"
-			}
-		})
-	);
-
-	app.use(async (req, _res, next) => {
-		try {
-			await authService.attachCurrentUser(req);
-			next();
-		} catch (error) {
-			next(error);
-		}
-	});
-
-	app.use((req, res, next) => {
-		res.locals.currentUser = req.currentUser;
-		res.locals.year = new Date().getFullYear();
-		next();
-	});
-
-	app.use(express.static(path.join(__dirname, "../public")));
+	await registerMiddleware(app, authService);
 
 	registerRoutes(app, controllers);
 
-	app.use(errorHandler);
-
 	app.listen(env.port, () => {
-		// eslint-disable-next-line no-console
 		console.log(`Serwer słucha na porcie ${env.port}`);
 	});
 }
