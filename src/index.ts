@@ -4,10 +4,6 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { env } from "./config/environment.js";
 import { getPool } from "./config/database.js";
-// NOTE: For this demo project we use the default in-memory session store
-//       which is fine for local development and smaller demos.
-//       Do NOT use the MemoryStore in production (use Redis, MySQL store, etc.).
-// CSRF middleware removed for demo purposes
 import { errorHandler } from "./middleware/errorHandler.js";
 import { registerRoutes } from "./routes/index.js";
 import { UserRepository } from "./repositories/UserRepository.js";
@@ -91,8 +87,6 @@ async function bootstrap() {
 		res.locals.year = new Date().getFullYear();
 		next();
 	});
-
-	// previously: app.use(attachCsrf); // removed for demo simplification
 
 	app.use(express.static(path.join(__dirname, "../public")));
 

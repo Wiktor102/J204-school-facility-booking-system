@@ -15,7 +15,7 @@ export const env = {
 	port: Number(process.env.PORT ?? 3000),
 	db: {
 		host: requireEnv("DB_HOST", "localhost"),
-		port: Number(process.env.DB_PORT ?? 3306),
+		port: 3306, // Na sztywno bo to port wewnetrzny w kontenerze
 		name: requireEnv("DB_NAME", "facility_booking"),
 		user: requireEnv("DB_USER", "booking_user"),
 		password: requireEnv("DB_PASSWORD", "")

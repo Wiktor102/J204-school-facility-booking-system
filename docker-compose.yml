@@ -9,9 +9,37 @@ services:
       MARIADB_USER: ${DB_USER}
       MARIADB_PASSWORD: ${DB_PASSWORD}
     ports:
-      - "3306:3306"
+      - "${DB_PORT:-3306}:3306"
     volumes:
       - mariadb_data:/var/lib/mysql
+    networks:
+      - booking_network
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: booking_app
+    restart: unless-stopped
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: ${PORT:-3000}
+      DB_HOST: mariadb
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      SESSION_SECRET: ${SESSION_SECRET}
+      SESSION_MAX_AGE: ${SESSION_MAX_AGE:-86400000}
+      TZ: ${TZ:-Europe/Warsaw}
+    ports:
+      - "${PORT:-3000}:3000"
+    depends_on:
+      mariadb:
+        condition: service_healthy
     networks:
       - booking_network
 
