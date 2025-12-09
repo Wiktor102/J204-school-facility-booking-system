@@ -16,6 +16,9 @@
           <strong><%= stats.totalBookings %></strong>
         </div>
       </div>
+      <div class="panel-actions">
+        <a class="btn btn--ghost" href="/admin/bookings">Rezerwacje uczniów</a>
+      </div>
     </header>
     <% if (typeof formError !== 'undefined') { %>
       <div class="alert alert--danger"><%= formError %></div>

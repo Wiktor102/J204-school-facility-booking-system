@@ -335,13 +335,6 @@ input[type=radio] {
   font-family: "Unbounded", "Space Grotesk", system-ui;
   margin: 0;
 }
-.hero__card {
-  background: #1a2332;
-  color: #fff;
-  border-radius: 1.5rem;
-  padding: 2rem;
-  box-shadow: 0 20px 60px rgba(16, 24, 40, 0.12);
-}
 
 .panel {
   background: #ffffff;
@@ -356,7 +349,6 @@ input[type=radio] {
   align-items: center;
   margin-bottom: 1.5rem;
 }
-/* removed panel--split styles (no longer used) */
 
 .icon {
   display: block;
@@ -393,28 +385,71 @@ input[type=radio] {
   grid-template-columns: auto 1fr;
   gap: 1.5rem;
   position: relative;
-}
-.equipment-card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  border: 2px solid var(--accent);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-}
-.equipment-card:hover::after {
-  opacity: 0.4;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 20px 60px rgba(16, 24, 40, 0.12);
+  align-items: center;
 }
 .equipment-card__icon {
   width: 72px;
   height: 72px;
   border-radius: 20px;
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(15, 23, 42, 0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+.equipment-card__icon::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.7), transparent);
+  opacity: 0.8;
+  pointer-events: none;
+}
+.equipment-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  position: relative;
+  z-index: 1;
+}
+.equipment-card__title {
+  margin: 0;
+  font-size: 1.05rem;
+}
+.equipment-card__location {
+  margin: 0.15rem 0 0;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+.equipment-card__meta {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  font-size: 0.9rem;
+}
+.equipment-card__meta li {
+  background: rgba(15, 23, 42, 0.03);
+  padding: 0.4rem 0.7rem;
+  border-radius: 999px;
+}
+.equipment-card__footer {
+  margin-top: 1rem;
+}
+.equipment-card__cta {
+  width: fit-content;
 }
 
-/* activity styles removed */
+.activity {
+  /* removed - UI deleted */
+}
 
 .calendar-view {
   display: flex;
@@ -626,6 +661,9 @@ table td {
   padding: 0.75rem 1.25rem;
   border-radius: 1rem;
   background: rgba(26, 35, 50, 0.06);
+}
+.stat-pill p {
+  margin-block-start: 0;
 }
 
 .calendar-column__slots {

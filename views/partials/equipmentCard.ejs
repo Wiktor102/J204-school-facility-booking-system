@@ -3,14 +3,16 @@
     <span class="icon icon--<%= equipment.iconName %>"></span>
   </div>
   <div class="equipment-card__body">
-    <header>
-      <h3><%= equipment.name %></h3>
+    <header class="equipment-card__header">
+      <h3 class="equipment-card__title"><%= equipment.name %></h3>
       <p class="equipment-card__location"><%= equipment.location %></p>
     </header>
     <ul class="equipment-card__meta">
       <li>Godziny: <strong><%= equipment.dailyStartHour %>:00 - <%= equipment.dailyEndHour %>:00</strong></li>
       <li>Czas: <strong><%= equipment.minDurationMinutes %> - <%= equipment.maxDurationMinutes %> min</strong></li>
     </ul>
-    <a class="btn btn--primary" href="/equipment/<%= equipment.id %>/calendar">Zobacz kalendarz</a>
+    <footer class="equipment-card__footer">
+      <a class="btn btn--primary equipment-card__cta" href="/equipment/<%= equipment.id %>/calendar">Zobacz kalendarz</a>
+    </footer>
   </div>
 </article>

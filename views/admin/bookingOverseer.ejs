@@ -46,14 +46,9 @@
             <th></th>
           </tr>
         </thead>
-                  <button
-                    class="btn btn--ghost"
-                    type="button"
-                    data-admin-cancel-booking
-                    data-booking-id="<%= booking.id %>"
-                  >
-                    Anuluj
-                  </button>
+        <tbody>
+          <% if (!bookings.length) { %>
+            <tr>
               <td colspan="7">Brak wyników dla zadanych filtrów.</td>
             </tr>
           <% } %>
