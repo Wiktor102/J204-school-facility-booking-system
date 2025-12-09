@@ -3,6 +3,10 @@
 
 	const toggleButtons = Array.from(document.querySelectorAll(".js-equipment-toggle"));
 	const cancelButtons = Array.from(document.querySelectorAll(".js-booking-cancel"));
+	const editButtons = Array.from(document.querySelectorAll(".js-equipment-edit"));
+	const editModal = document.getElementById("editEquipmentModal");
+	const cancelEditBtn = document.getElementById("cancelEdit");
+	const saveEditBtn = document.getElementById("saveEdit");
 
 	async function toggleEquipment(button) {
 		const equipmentId = button.dataset.equipmentId;
@@ -112,5 +116,68 @@
 				cancelBooking(button);
 			});
 		});
+	}
+
+	if (editButtons.length && editModal) {
+		editButtons.forEach((btn) => {
+			btn.addEventListener("click", () => {
+				const id = btn.dataset.id;
+				document.getElementById("editId").value = id;
+				document.getElementById("editName").value = btn.dataset.name;
+				document.getElementById("editLocation").value = btn.dataset.location;
+				document.getElementById("editIconName").value = btn.dataset.iconName;
+				document.getElementById("editAccentColor").value = btn.dataset.accentColor;
+				document.getElementById("editDailyStartHour").value = btn.dataset.dailyStartHour;
+				document.getElementById("editDailyEndHour").value = btn.dataset.dailyEndHour;
+				document.getElementById("editMinDurationMinutes").value = btn.dataset.minDurationMinutes;
+				document.getElementById("editMaxDurationMinutes").value = btn.dataset.maxDurationMinutes;
+
+				editModal.showModal();
+			});
+		});
+
+		if (cancelEditBtn) {
+			cancelEditBtn.addEventListener("click", () => {
+				editModal.close();
+			});
+		}
+
+		if (saveEditBtn) {
+			saveEditBtn.addEventListener("click", async (e) => {
+				e.preventDefault();
+				const id = document.getElementById("editId").value;
+				const data = {
+					name: document.getElementById("editName").value,
+					location: document.getElementById("editLocation").value,
+					iconName: document.getElementById("editIconName").value,
+					accentColor: document.getElementById("editAccentColor").value,
+					dailyStartHour: document.getElementById("editDailyStartHour").value,
+					dailyEndHour: document.getElementById("editDailyEndHour").value,
+					minDurationMinutes: document.getElementById("editMinDurationMinutes").value,
+					maxDurationMinutes: document.getElementById("editMaxDurationMinutes").value
+				};
+
+				try {
+					const response = await fetch(`/admin/equipment/${id}`, {
+						method: "PATCH",
+						headers: {
+							"Content-Type": "application/json",
+							Accept: "application/json"
+						},
+						body: JSON.stringify(data)
+					});
+
+					if (!response.ok) {
+						const errorText = await response.text();
+						throw new Error(errorText || "Nie udało się zaktualizować sprzętu.");
+					}
+
+					window.location.reload();
+				} catch (error) {
+					console.error(error);
+					alert(error instanceof Error ? error.message : "Nieznany błąd podczas aktualizacji.");
+				}
+			});
+		}
 	}
 })();

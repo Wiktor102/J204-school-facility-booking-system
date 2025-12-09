@@ -80,6 +80,21 @@
                 </td>
                 <td>
                   <button
+                    class="btn btn--ghost js-equipment-edit"
+                    type="button"
+                    data-id="<%= item.id %>"
+                    data-name="<%= item.name %>"
+                    data-location="<%= item.location %>"
+                    data-icon-name="<%= item.iconName %>"
+                    data-accent-color="<%= item.accentColor %>"
+                    data-daily-start-hour="<%= item.dailyStartHour %>"
+                    data-daily-end-hour="<%= item.dailyEndHour %>"
+                    data-min-duration-minutes="<%= item.minDurationMinutes %>"
+                    data-max-duration-minutes="<%= item.maxDurationMinutes %>"
+                  >
+                    Edytuj
+                  </button>
+                  <button
                     class="btn btn--ghost js-equipment-toggle"
                     type="button"
                     data-equipment-id="<%= item.id %>"
@@ -117,5 +132,44 @@
     </form>
     <p class="muted">Wyświetlanie istniejących blokad dostępne w module nadzoru rezerwacji.</p>
   </section>
+
+  <dialog id="editEquipmentModal" class="modal">
+    <form method="dialog" class="form-card" style="min-width: 500px;">
+      <h2>Edytuj sprzęt</h2>
+      <input type="hidden" name="id" id="editId">
+      <div class="form-grid">
+        <label>Nazwa
+          <input type="text" name="name" id="editName" required />
+        </label>
+        <label>Lokalizacja
+          <input type="text" name="location" id="editLocation" required />
+        </label>
+        <label>Ikona (słowo kluczowe)
+          <input type="text" name="iconName" id="editIconName" required />
+        </label>
+        <label>Kolor akcentu (HEX)
+          <input type="text" name="accentColor" id="editAccentColor" required />
+        </label>
+      </div>
+      <div class="form-grid form-grid--compact">
+        <label>Start godziny
+          <input type="number" name="dailyStartHour" id="editDailyStartHour" min="0" max="23" />
+        </label>
+        <label>Koniec godziny
+          <input type="number" name="dailyEndHour" id="editDailyEndHour" min="0" max="23" />
+        </label>
+        <label>Minimalny czas (min)
+          <input type="number" name="minDurationMinutes" id="editMinDurationMinutes" />
+        </label>
+        <label>Maksymalny czas (min)
+          <input type="number" name="maxDurationMinutes" id="editMaxDurationMinutes" />
+        </label>
+      </div>
+      <div style="display: flex; gap: 1rem; margin-top: 1rem; justify-content: flex-end;">
+        <button class="btn btn--ghost" type="button" id="cancelEdit">Anuluj</button>
+        <button class="btn btn--primary" type="submit" id="saveEdit">Zapisz zmiany</button>
+      </div>
+    </form>
+  </dialog>
 </main>
 <%- include('../partials/footer') %>
