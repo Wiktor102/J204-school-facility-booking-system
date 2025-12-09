@@ -53,6 +53,16 @@ export interface TimeSlot {
 	isCompleted?: boolean;
 }
 
+export interface CalendarEvent {
+	id: number;
+	startTime: string;
+	endTime: string;
+	type: "booking" | "blocked";
+	isOwn: boolean;
+	isCompleted: boolean;
+	reason?: string;
+}
+
 export interface WeekView {
 	weekStart: Date;
 	weekEnd: Date;
@@ -63,4 +73,5 @@ export interface DaySlots {
 	date: Date;
 	dayName: string;
 	slots: TimeSlot[];
+	events: CalendarEvent[];
 }

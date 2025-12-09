@@ -1,6 +1,26 @@
 const calendar = document.querySelector(".calendar-view");
-const durationPicker = document.getElementById("duration-picker");
 const bookingForm = document.getElementById("booking-form");
+
+function toMinutes(time) {
+	const [h, m] = time.split(":").map(Number);
+	return h * 60 + m;
+}
+
+function minutesToTime(minutes) {
+	const h = Math.floor(minutes / 60)
+		.toString()
+		.padStart(2, "0");
+	const m = (minutes % 60).toString().padStart(2, "0");
+	return `${h}:${m}`;
+}
+
+function overlaps(aStart, aEnd, bStart, bEnd) {
+	const aS = toMinutes(aStart);
+	const aE = toMinutes(aEnd);
+	const bS = toMinutes(bStart);
+	const bE = toMinutes(bEnd);
+	return !(aE <= bS || bE <= aS);
+}
 
 function ensureModal() {
 	let modal = document.querySelector(".booking-modal");
@@ -9,10 +29,25 @@ function ensureModal() {
 		modal.className = "booking-modal is-hidden";
 		modal.innerHTML = `
       <div class="booking-modal__body">
-        <p class="booking-modal__title">Potwierdź rezerwację</p>
-        <p class="booking-modal__slot"></p>
+        <p class="booking-modal__title">Nowa rezerwacja</p>
+        <div class="booking-modal__form">
+          <div class="form-group">
+            <label>Data</label>
+            <p class="booking-modal__date"></p>
+          </div>
+          <div class="form-group">
+            <label for="modal-start-time">Godzina rozpoczęcia</label>
+            <input type="time" id="modal-start-time" class="form-input" />
+          </div>
+          <div class="form-group">
+            <label for="modal-duration">Czas trwania (minuty)</label>
+            <input type="number" id="modal-duration" class="form-input" step="15" />
+          </div>
+          <p class="booking-modal__preview"></p>
+          <p class="booking-modal__error is-hidden"></p>
+        </div>
         <div class="booking-modal__actions">
-          <button type="button" class="btn btn--ghost" data-dismiss>Porzuć</button>
+          <button type="button" class="btn btn--ghost" data-dismiss>Anuluj</button>
           <button type="button" class="btn btn--primary" data-confirm>Rezerwuj</button>
         </div>
       </div>`;
@@ -26,27 +61,140 @@ function ensureModal() {
 
 if (calendar && bookingForm) {
 	const modal = ensureModal();
-	let pendingSlot = null;
+	const startHour = parseInt(calendar.dataset.startHour, 10);
+	const endHour = parseInt(calendar.dataset.endHour, 10);
+	const minDuration = parseInt(calendar.dataset.minDuration, 10);
+	const maxDuration = parseInt(calendar.dataset.maxDuration, 10);
 
-	calendar.addEventListener("click", (event) => {
-		const slotButton = event.target.closest(".slot--available");
-		if (!slotButton) {
-			return;
+	let pendingDate = null;
+	let pendingEvents = [];
+
+	const startTimeInput = modal.querySelector("#modal-start-time");
+	const durationInput = modal.querySelector("#modal-duration");
+	const previewEl = modal.querySelector(".booking-modal__preview");
+	const errorEl = modal.querySelector(".booking-modal__error");
+	const dateDisplay = modal.querySelector(".booking-modal__date");
+
+	function updatePreview() {
+		const startTime = startTimeInput.value;
+		const duration = parseInt(durationInput.value, 10);
+
+		errorEl.classList.add("is-hidden");
+		errorEl.textContent = "";
+
+		if (!startTime || !duration) {
+			previewEl.textContent = "";
+			return false;
 		}
-		const date = slotButton.getAttribute("data-date");
-		const startRaw = slotButton.getAttribute("data-start");
-		const start = startRaw ? startRaw.split(":").slice(0, 2).join(":") : startRaw;
-		pendingSlot = { date, start };
-		const display = modal.querySelector(".booking-modal__slot");
-		display.textContent = `${new Date(date).toLocaleDateString("pl-PL")} • ${start}`;
-		modal.classList.remove("is-hidden");
+
+		const startMinutes = toMinutes(startTime);
+		const endMinutes = startMinutes + duration;
+		const endTime = minutesToTime(endMinutes);
+
+		previewEl.textContent = `${startTime} - ${endTime}`;
+
+		// Validation
+		if (startMinutes < startHour * 60) {
+			errorEl.textContent = `Rezerwacja nie może zaczynać się przed ${startHour}:00`;
+			errorEl.classList.remove("is-hidden");
+			return false;
+		}
+
+		if (endMinutes > endHour * 60) {
+			errorEl.textContent = `Rezerwacja musi kończyć się do ${endHour}:00`;
+			errorEl.classList.remove("is-hidden");
+			return false;
+		}
+
+		if (duration < minDuration) {
+			errorEl.textContent = `Minimalny czas trwania to ${minDuration} minut`;
+			errorEl.classList.remove("is-hidden");
+			return false;
+		}
+
+		if (duration > maxDuration) {
+			errorEl.textContent = `Maksymalny czas trwania to ${maxDuration} minut`;
+			errorEl.classList.remove("is-hidden");
+			return false;
+		}
+
+		// Check for overlaps with existing events
+		for (const event of pendingEvents) {
+			if (overlaps(startTime, endTime, event.startTime, event.endTime)) {
+				errorEl.textContent = "Ten termin koliduje z istniejącą rezerwacją";
+				errorEl.classList.remove("is-hidden");
+				return false;
+			}
+		}
+
+		// Check if in the past
+		const today = new Date();
+		const todayStr = today.toISOString().slice(0, 10);
+		const nowMinutes = today.getHours() * 60 + today.getMinutes();
+		if (pendingDate < todayStr || (pendingDate === todayStr && startMinutes <= nowMinutes)) {
+			errorEl.textContent = "Nie można rezerwować w przeszłości";
+			errorEl.classList.remove("is-hidden");
+			return false;
+		}
+
+		return true;
+	}
+
+	startTimeInput.addEventListener("input", updatePreview);
+	durationInput.addEventListener("input", updatePreview);
+
+	// Click on timeline to create booking
+	document.querySelectorAll(".calendar-day__timeline").forEach((timeline) => {
+		timeline.addEventListener("click", (e) => {
+			// Don't trigger if clicking on an existing event
+			if (e.target.closest(".calendar-event")) return;
+
+			const dayEl = timeline.closest(".calendar-day");
+			if (!dayEl) return;
+
+			pendingDate = dayEl.dataset.date;
+			try {
+				pendingEvents = JSON.parse(dayEl.dataset.events || "[]");
+			} catch (error) {
+				console.error("Error parsing events:", error);
+				pendingEvents = [];
+			}
+
+			// Calculate clicked time based on position
+			const rect = timeline.getBoundingClientRect();
+			const clickY = e.clientY - rect.top;
+			const percentY = clickY / rect.height;
+			const totalMinutes = (endHour - startHour) * 60;
+			const clickedMinutes = startHour * 60 + Math.floor(percentY * totalMinutes);
+
+			// Round to nearest 15 minutes
+			const roundedMinutes = Math.round(clickedMinutes / 15) * 15;
+			const clickedTime = minutesToTime(
+				Math.max(startHour * 60, Math.min(roundedMinutes, endHour * 60 - minDuration))
+			);
+
+			dateDisplay.textContent = new Date(pendingDate).toLocaleDateString("pl-PL");
+			startTimeInput.value = clickedTime;
+			startTimeInput.min = minutesToTime(startHour * 60);
+			startTimeInput.max = minutesToTime(endHour * 60 - minDuration);
+			durationInput.value = minDuration;
+			durationInput.min = minDuration;
+			durationInput.max = maxDuration;
+
+			updatePreview();
+			modal.classList.remove("is-hidden");
+		});
 	});
 
 	modal.querySelector("[data-confirm]").addEventListener("click", async () => {
-		if (!pendingSlot) return;
-		const duration = durationPicker ? durationPicker.value : "60";
-		bookingForm.elements.namedItem("bookingDate").value = pendingSlot.date;
-		bookingForm.elements.namedItem("startTime").value = pendingSlot.start;
+		if (!pendingDate) return;
+		if (!updatePreview()) return;
+
+		const startTime = startTimeInput.value;
+		const duration = durationInput.value;
+
+		bookingForm.elements.namedItem("bookingDate").value = pendingDate;
+		bookingForm.elements.namedItem("startTime").value = startTime;
 		bookingForm.elements.namedItem("duration").value = duration;
 
 		const formData = new FormData(bookingForm);
@@ -61,7 +209,7 @@ if (calendar && bookingForm) {
 		});
 
 		if (response.ok) {
-			window.location.href = "/my-bookings";
+			window.location.reload();
 			return;
 		}
 
@@ -77,6 +225,7 @@ if (calendar && bookingForm) {
 			return;
 		}
 
-		alert(json?.message ?? "Nie udało się utworzyć rezerwacji.");
+		errorEl.textContent = json?.message ?? "Nie udało się utworzyć rezerwacji.";
+		errorEl.classList.remove("is-hidden");
 	});
 }

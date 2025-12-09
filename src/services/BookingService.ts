@@ -3,7 +3,7 @@ import type { EquipmentRepository } from "../repositories/EquipmentRepository.js
 import { validate, validateBookingDuration, validateBookingTime } from "../utils/validators.js";
 import { AppError, ForbiddenError, ValidationAppError } from "../utils/errors.js";
 import { BookingStatus } from "../types/models.js";
-import type { Booking, DaySlots, TimeSlot, WeekView } from "../types/models.js";
+import type { Booking, CalendarEvent, DaySlots, WeekView } from "../types/models.js";
 import { getWeekRange, buildWeekDays, getDayName, formatDate } from "../utils/dateHelpers.js";
 
 function toMinutes(time: string): number {
@@ -40,7 +40,7 @@ export class BookingService {
 		private equipmentRepo: EquipmentRepository
 	) {}
 
-	async generateSlots(equipmentId: number, date: string, currentUserId?: number): Promise<DaySlots> {
+	async generateDayEvents(equipmentId: number, date: string, currentUserId?: number): Promise<DaySlots> {
 		const equipment = await this.equipmentRepo.findById(equipmentId);
 		if (!equipment) {
 			throw new AppError("Sprzęt nie istnieje", 404);
@@ -49,50 +49,57 @@ export class BookingService {
 		const bookings = await this.bookings.findByEquipmentAndDate(equipmentId, date);
 		const blocks = await this.bookings.getBlockedSlots(equipmentId, date);
 
-		const slots: TimeSlot[] = [];
-		const today = new Date();
-		const todayStr = formatDate(today);
+		const events: CalendarEvent[] = [];
 
-		for (let hour = equipment.dailyStartHour; hour < equipment.dailyEndHour; hour++) {
-			for (let duration = equipment.minDurationMinutes; duration <= equipment.maxDurationMinutes; duration += 30) {
-				const startMinutes = hour * 60;
-				const endMinutes = startMinutes + duration;
-				if (endMinutes > equipment.dailyEndHour * 60) {
-					continue;
-				}
-				const startTime = minutesToTime(startMinutes);
-				const endTime = minutesToTime(endMinutes);
-
-				const hasBookingConflict = bookings.some(
-					(b) => overlaps(startTime, endTime, b.startTime, b.endTime) && b.status === "active"
-				);
-
-				const blocked = blocks.some((block) => overlaps(startTime, endTime, block.start_time, block.end_time));
-
-				const nowMinutes = today.getHours() * 60 + today.getMinutes();
-				const isPast = date < todayStr || (date === todayStr && toMinutes(startTime) <= nowMinutes);
-
-				const ownBooking = bookings.find(
-					(b) => b.userId === currentUserId && overlaps(startTime, endTime, b.startTime, b.endTime)
-				);
-
-				const slot: TimeSlot = {
-					date: new Date(date),
-					startTime,
-					endTime,
-					isAvailable: !hasBookingConflict && !blocked && !isPast,
-					bookerId: ownBooking?.userId,
-					isOwnBooking: !!ownBooking,
-					isCompleted: ownBooking ? isCompletedBooking(ownBooking) : undefined
-				};
-				slots.push(slot);
-			}
+		// Add bookings as events
+		for (const booking of bookings) {
+			if (booking.status !== "active") continue;
+			events.push({
+				id: booking.id,
+				startTime: booking.startTime,
+				endTime: booking.endTime,
+				type: "booking",
+				isOwn: booking.userId === currentUserId,
+				isCompleted: isCompletedBooking(booking)
+			});
 		}
+
+		// Add blocked slots as events (clamped to working hours)
+		const dayStartMinutes = equipment.dailyStartHour * 60;
+		const dayEndMinutes = equipment.dailyEndHour * 60;
+
+		for (const block of blocks) {
+			const blockStart = toMinutes(block.start_time);
+			const blockEnd = toMinutes(block.end_time);
+
+			// Skip blocks entirely outside working hours
+			if (blockEnd <= dayStartMinutes || blockStart >= dayEndMinutes) {
+				continue;
+			}
+
+			// Clamp to working hours
+			const clampedStart = Math.max(blockStart, dayStartMinutes);
+			const clampedEnd = Math.min(blockEnd, dayEndMinutes);
+
+			events.push({
+				id: block.id,
+				startTime: minutesToTime(clampedStart),
+				endTime: minutesToTime(clampedEnd),
+				type: "blocked",
+				isOwn: false,
+				isCompleted: false,
+				reason: block.reason ?? undefined
+			});
+		}
+
+		// Sort events by start time
+		events.sort((a, b) => toMinutes(a.startTime) - toMinutes(b.startTime));
 
 		return {
 			date: new Date(date),
 			dayName: getDayName(new Date(date)),
-			slots
+			slots: [], // Legacy field, kept for compatibility
+			events
 		};
 	}
 
@@ -103,7 +110,7 @@ export class BookingService {
 
 		for (const day of days) {
 			const dayStr = formatDate(day);
-			const daySlots = await this.generateSlots(equipmentId, dayStr, currentUserId);
+			const daySlots = await this.generateDayEvents(equipmentId, dayStr, currentUserId);
 			slots.push(daySlots);
 		}
 

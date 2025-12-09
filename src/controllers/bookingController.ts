@@ -26,16 +26,10 @@ export class BookingController {
 			const nextWeekDate = formatDate(addDaysSafe(weekView.weekStart, 7));
 			const prevWeekDate = formatDate(addDaysSafe(weekView.weekStart, -7));
 
-			const durationOptions: number[] = [];
-			for (let duration = equipment.minDurationMinutes; duration <= equipment.maxDurationMinutes; duration += 30) {
-				durationOptions.push(duration);
-			}
-
 			res.render("calendar", {
 				pageTitle: `Kalendarz • ${equipment.name}`,
 				equipment,
 				weekView,
-				durationOptions,
 				selectedDate: formatDate(baseDate),
 				nextWeekDate,
 				prevWeekDate

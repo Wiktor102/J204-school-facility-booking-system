@@ -82,6 +82,7 @@
 		opacity 0.3s ease,
 		transform 0.3s ease;
 	padding: 1.5rem;
+	z-index: 100;
 
 	&.is-hidden {
 		opacity: 0;
@@ -90,13 +91,71 @@
 	}
 
 	&__title {
-		margin: 0 0 0.35rem;
+		margin: 0 0 1rem;
 		font-weight: 600;
+		font-size: 1.1rem;
 	}
 
 	&__slot {
 		margin: 0 0 1rem;
 		color: variables.$color-text-light;
+	}
+
+	&__form {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+		margin-bottom: 1rem;
+
+		.form-group {
+			display: flex;
+			flex-direction: column;
+			gap: 0.25rem;
+
+			label {
+				font-size: 0.85rem;
+				color: #64748b;
+			}
+		}
+
+		.form-input {
+			padding: 0.5rem 0.75rem;
+			border: 1px solid rgba(15, 23, 42, 0.15);
+			border-radius: 0.5rem;
+			font-size: 1rem;
+
+			&:focus {
+				outline: none;
+				border-color: variables.$color-accent-cyan;
+				box-shadow: 0 0 0 3px rgba(variables.$color-accent-cyan, 0.1);
+			}
+		}
+	}
+
+	&__date {
+		font-weight: 500;
+		color: #1e293b;
+	}
+
+	&__preview {
+		font-size: 0.9rem;
+		color: #64748b;
+		padding: 0.5rem;
+		background: rgba(15, 23, 42, 0.03);
+		border-radius: 0.5rem;
+		text-align: center;
+	}
+
+	&__error {
+		font-size: 0.85rem;
+		color: #dc2626;
+		padding: 0.5rem;
+		background: rgba(239, 68, 68, 0.08);
+		border-radius: 0.5rem;
+
+		&.is-hidden {
+			display: none;
+		}
 	}
 
 	&__actions {

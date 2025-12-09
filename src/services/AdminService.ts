@@ -47,6 +47,32 @@ export class AdminService {
 		reason?: string;
 		createdBy: number;
 	}): Promise<number> {
+		// Validate times are within equipment working hours
+		const equipment = await this.equipmentRepo.findById(data.equipmentId);
+		if (!equipment) {
+			throw new ValidationAppError("Sprzęt nie istnieje");
+		}
+
+		const toMinutes = (time: string) => {
+			const [h, m] = time.split(":").map(Number);
+			return h * 60 + m;
+		};
+
+		const startMinutes = toMinutes(data.startTime);
+		const endMinutes = toMinutes(data.endTime);
+		const dayStart = equipment.dailyStartHour * 60;
+		const dayEnd = equipment.dailyEndHour * 60;
+
+		if (startMinutes < dayStart || endMinutes > dayEnd) {
+			throw new ValidationAppError(
+				`Blokada musi być w godzinach pracy sprzętu (${equipment.dailyStartHour}:00 - ${equipment.dailyEndHour}:00)`
+			);
+		}
+
+		if (startMinutes >= endMinutes) {
+			throw new ValidationAppError("Godzina rozpoczęcia musi być przed godziną zakończenia");
+		}
+
 		return this.bookings.createBlockedSlot(data);
 	}
 

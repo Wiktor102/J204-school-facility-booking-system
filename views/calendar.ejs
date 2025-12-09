@@ -1,5 +1,9 @@
 <%- include('layouts/main', { pageTitle }) %>
-<main class="calendar-view" data-equipment-id="<%= equipment.id %>">
+<main class="calendar-view" data-equipment-id="<%= equipment.id %>"
+      data-start-hour="<%= equipment.dailyStartHour %>"
+      data-end-hour="<%= equipment.dailyEndHour %>"
+      data-min-duration="<%= equipment.minDurationMinutes %>"
+      data-max-duration="<%= equipment.maxDurationMinutes %>">
   <section class="equipment-hero">
     <div class="equipment-hero__info">
       <p class="eyebrow">Planowanie sesji</p>
@@ -12,13 +16,7 @@
       </ul>
     </div>
     <div class="equipment-hero__actions">
-      <label for="duration-picker">Długość sesji</label>
-      <select id="duration-picker" class="form-select">
-        <% durationOptions.forEach((option) => { %>
-          <option value="<%= option %>"><%= option %> min</option>
-        <% }) %>
-      </select>
-      <p class="muted">Wybierz interesujący slot, aby potwierdzić rezerwację.</p>
+      <p class="muted">Kliknij na wolne miejsce w kalendarzu, aby utworzyć rezerwację.</p>
     </div>
   </section>
 
@@ -31,35 +29,58 @@
     <a class="btn btn--ghost" href="/equipment/<%= equipment.id %>/calendar?date=<%= nextWeekDate %>">Następny tydzień</a>
   </section>
 
-  <section class="calendar-grid">
-    <% weekView.days.forEach((day) => { %>
-      <div class="calendar-column">
-        <header>
-          <p class="calendar-column__day"><%= day.dayName %></p>
-          <p class="calendar-column__date"><%= day.date.toLocaleDateString('pl-PL') %></p>
-        </header>
-        <div class="calendar-column__slots">
-          <% day.slots.forEach((slot) => { %>
-            <button
-              class="slot <%= slot.isOwnBooking ? 'slot--own' : '' %> <%= !slot.isAvailable ? 'slot--disabled' : 'slot--available' %>"
-              data-date="<%= slot.date.toISOString().slice(0, 10) %>"
-              data-start="<%= slot.startTime %>"
-              data-end="<%= slot.endTime %>"
-              <%= slot.isAvailable ? '' : 'disabled' %>
-            >
-              <span><%= slot.startTime %> - <%= slot.endTime %></span>
-              <% if (slot.isOwnBooking) { %>
-                <small>Twoja rezerwacja</small>
-              <% } %>
-            </button>
-          <% }) %>
+  <section class="calendar-timeline">
+    <div class="calendar-timeline__hours">
+      <% for (let h = equipment.dailyStartHour; h <= equipment.dailyEndHour; h++) { %>
+        <div class="calendar-timeline__hour"><%= String(h).padStart(2, '0') %>:00</div>
+      <% } %>
+    </div>
+    <div class="calendar-timeline__days">
+      <% weekView.days.forEach((day) => { 
+        const dateStr = day.date.toISOString().slice(0, 10);
+        const eventsJson = JSON.stringify(day.events);
+      %>
+        <div class="calendar-day" data-date="<%= dateStr %>" data-events="<%= eventsJson.replace(/"/g, '&quot;') %>">
+          <header class="calendar-day__header">
+            <p class="calendar-day__name"><%= day.dayName %></p>
+            <p class="calendar-day__date"><%= day.date.toLocaleDateString('pl-PL') %></p>
+          </header>
+          <div class="calendar-day__timeline">
+            <% for (let h = equipment.dailyStartHour; h < equipment.dailyEndHour; h++) { %>
+              <div class="calendar-day__hour-line"></div>
+            <% } %>
+            <% day.events.forEach((event) => { 
+              const startMinutes = parseInt(event.startTime.split(':')[0]) * 60 + parseInt(event.startTime.split(':')[1]);
+              const endMinutes = parseInt(event.endTime.split(':')[0]) * 60 + parseInt(event.endTime.split(':')[1]);
+              const dayStartMinutes = equipment.dailyStartHour * 60;
+              const dayEndMinutes = equipment.dailyEndHour * 60;
+              const totalMinutes = dayEndMinutes - dayStartMinutes;
+              const topPercent = ((startMinutes - dayStartMinutes) / totalMinutes) * 100;
+              const heightPercent = ((endMinutes - startMinutes) / totalMinutes) * 100;
+            %>
+              <div class="calendar-event calendar-event--<%= event.type %> <%= event.isOwn ? 'calendar-event--own' : '' %> <%= event.isCompleted ? 'calendar-event--completed' : '' %>"
+                   style="top: <%= topPercent %>%; height: <%= heightPercent %>%;"
+                   data-event-id="<%= event.id %>"
+                   data-start="<%= event.startTime %>"
+                   data-end="<%= event.endTime %>">
+                <span class="calendar-event__time"><%= event.startTime %> - <%= event.endTime %></span>
+                <% if (event.isOwn) { %>
+                  <small>Twoja rezerwacja</small>
+                <% } else if (event.type === 'blocked') { %>
+                  <small><%= event.reason || 'Zablokowane' %></small>
+                <% } else { %>
+                  <small>Zajęte</small>
+                <% } %>
+              </div>
+            <% }) %>
+          </div>
         </div>
-      </div>
-    <% }) %>
+      <% }) %>
+    </div>
   </section>
 
   <section class="calendar-tips">
-    <p>Po kliknięciu w slot pojawi się panel potwierdzający. Możesz anulować rezerwację do dowolnego momentu.</p>
+    <p>Kliknij wolne miejsce na kalendarzu i wybierz czas trwania rezerwacji. Twoje rezerwacje są oznaczone kolorem.</p>
   </section>
 
   <form id="booking-form" method="post" action="/bookings">

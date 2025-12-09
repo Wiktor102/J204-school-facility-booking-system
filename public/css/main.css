@@ -494,6 +494,116 @@ input[type=radio] {
   gap: 0.5rem;
 }
 
+/* Timeline-based calendar */
+.calendar-timeline {
+  display: flex;
+  gap: 0;
+  background: #ffffff;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(16, 24, 40, 0.12);
+}
+.calendar-timeline__hours {
+  display: flex;
+  flex-direction: column;
+  padding: 3.5rem 0.75rem 0.5rem;
+  background: rgba(15, 23, 42, 0.03);
+  border-right: 1px solid rgba(15, 23, 42, 0.08);
+}
+.calendar-timeline__hour {
+  flex: 1;
+  font-size: 0.75rem;
+  color: #64748b;
+  min-height: 3rem;
+}
+.calendar-timeline__days {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+}
+
+.calendar-day {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid rgba(15, 23, 42, 0.06);
+}
+.calendar-day:last-child {
+  border-right: none;
+}
+.calendar-day__header {
+  padding: 0.75rem 0.5rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  background: rgba(15, 23, 42, 0.02);
+}
+.calendar-day__name {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.calendar-day__date {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+.calendar-day__timeline {
+  position: relative;
+  flex: 1;
+  min-height: 400px;
+  cursor: pointer;
+}
+.calendar-day__timeline:hover {
+  background: rgba(16, 185, 129, 0.05);
+}
+.calendar-day__hour-line {
+  border-bottom: 1px dashed rgba(15, 23, 42, 0.08);
+  height: calc(100% / var(--hours-count, 8));
+  min-height: 3rem;
+}
+
+.calendar-event {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  border-radius: 0.5rem;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.75rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  cursor: default;
+  z-index: 1;
+}
+.calendar-event__time {
+  font-weight: 600;
+  white-space: nowrap;
+}
+.calendar-event small {
+  opacity: 0.8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.calendar-event--booking {
+  background: rgba(55, 65, 81, 0.15);
+  border: 1px solid rgba(55, 65, 81, 0.3);
+  color: #374151;
+}
+.calendar-event--blocked {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #dc2626;
+}
+.calendar-event--own {
+  background: rgba(0, 217, 255, 0.2);
+  border: 1px solid #00d9ff;
+  color: rgb(0, 151.9, 178.5);
+}
+.calendar-event--completed {
+  opacity: 0.5;
+}
+
 .slot {
   border: none;
   border-radius: 1rem;
@@ -705,6 +815,7 @@ table td {
   transform: translateY(0);
   transition: opacity 0.3s ease, transform 0.3s ease;
   padding: 1.5rem;
+  z-index: 100;
 }
 .booking-modal.is-hidden {
   opacity: 0;
@@ -712,12 +823,61 @@ table td {
   transform: translateY(40px);
 }
 .booking-modal__title {
-  margin: 0 0 0.35rem;
+  margin: 0 0 1rem;
   font-weight: 600;
+  font-size: 1.1rem;
 }
 .booking-modal__slot {
   margin: 0 0 1rem;
   color: #6b7280;
+}
+.booking-modal__form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.booking-modal__form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.booking-modal__form .form-group label {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+.booking-modal__form .form-input {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid rgba(15, 23, 42, 0.15);
+  border-radius: 0.5rem;
+  font-size: 1rem;
+}
+.booking-modal__form .form-input:focus {
+  outline: none;
+  border-color: #00d9ff;
+  box-shadow: 0 0 0 3px rgba(0, 217, 255, 0.1);
+}
+.booking-modal__date {
+  font-weight: 500;
+  color: #1e293b;
+}
+.booking-modal__preview {
+  font-size: 0.9rem;
+  color: #64748b;
+  padding: 0.5rem;
+  background: rgba(15, 23, 42, 0.03);
+  border-radius: 0.5rem;
+  text-align: center;
+}
+.booking-modal__error {
+  font-size: 0.85rem;
+  color: #dc2626;
+  padding: 0.5rem;
+  background: rgba(239, 68, 68, 0.08);
+  border-radius: 0.5rem;
+}
+.booking-modal__error.is-hidden {
+  display: none;
 }
 .booking-modal__actions {
   display: flex;
