@@ -5,7 +5,6 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { env } from "../config/environment.js";
 import { AuthService } from "../services/AuthService.js";
-import { errorHandler } from "./errorHandler.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -43,5 +42,4 @@ export async function registerMiddleware(app: Express, authService: AuthService)
 	});
 
 	app.use(express.static(path.join(__dirname, "../../public")));
-	app.use(errorHandler);
 }

@@ -4,6 +4,7 @@ import { fileURLToPath } from "url";
 import { env } from "./config/environment.js";
 import { getPool } from "./config/database.js";
 import { registerMiddleware } from "./middleware/index.js";
+import { errorHandler } from "./middleware/errorHandler.js";
 import { registerRoutes } from "./routes/index.js";
 import { UserRepository } from "./repositories/UserRepository.js";
 import { EquipmentRepository } from "./repositories/EquipmentRepository.js";
@@ -46,6 +47,8 @@ async function bootstrap() {
 	await registerMiddleware(app, authService);
 
 	registerRoutes(app, controllers);
+
+	app.use(errorHandler);
 
 	app.listen(env.port, () => {
 		console.log(`Serwer słucha na porcie ${env.port}`);
