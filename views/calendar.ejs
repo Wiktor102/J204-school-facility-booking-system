@@ -23,12 +23,12 @@
   </section>
 
   <section class="calendar-nav">
-    <a class="btn btn--ghost" href="/equipment/<%= equipment.id %>/calendar?date=<%= new Date(weekView.weekStart.getTime() - 7 * 86400000).toISOString().slice(0, 10) %>">Poprzedni tydzień</a>
+    <a class="btn btn--ghost" href="/equipment/<%= equipment.id %>/calendar?date=<%= prevWeekDate %>">Poprzedni tydzień</a>
     <div>
       <h2>Tydzień <%= new Date(selectedDate).toLocaleDateString('pl-PL') %></h2>
       <p class="muted"><%= weekView.weekStart.toLocaleDateString('pl-PL') %> - <%= weekView.weekEnd.toLocaleDateString('pl-PL') %></p>
     </div>
-    <a class="btn btn--ghost" href="/equipment/<%= equipment.id %>/calendar?date=<%= new Date(weekView.weekStart.getTime() + 7 * 86400000).toISOString().slice(0, 10) %>">Następny tydzień</a>
+    <a class="btn btn--ghost" href="/equipment/<%= equipment.id %>/calendar?date=<%= nextWeekDate %>">Następny tydzień</a>
   </section>
 
   <section class="calendar-grid">

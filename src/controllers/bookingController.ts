@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import { BookingService } from "../services/BookingService.js";
 import { EquipmentRepository } from "../repositories/EquipmentRepository.js";
-import { formatDate } from "../utils/dateHelpers.js";
+import { formatDate, addDaysSafe } from "../utils/dateHelpers.js";
 import { ValidationAppError, AppError } from "../utils/errors.js";
 import { BookingStatus } from "../types/models.js";
 
@@ -19,8 +19,12 @@ export class BookingController {
 				throw new AppError("Sprzęt nie został odnaleziony", 404);
 			}
 
-			const baseDate = req.query.date ? new Date(String(req.query.date)) : new Date();
+			const dateParam = req.query.date ? String(req.query.date) : null;
+			const baseDate = dateParam ? new Date(`${dateParam}T00:00:00`) : new Date();
 			const weekView = await this.bookingService.buildWeekView(equipmentId, baseDate, req.currentUser?.id);
+
+			const nextWeekDate = formatDate(addDaysSafe(weekView.weekStart, 7));
+			const prevWeekDate = formatDate(addDaysSafe(weekView.weekStart, -7));
 
 			const durationOptions: number[] = [];
 			for (let duration = equipment.minDurationMinutes; duration <= equipment.maxDurationMinutes; duration += 30) {
@@ -32,7 +36,9 @@ export class BookingController {
 				equipment,
 				weekView,
 				durationOptions,
-				selectedDate: formatDate(baseDate)
+				selectedDate: formatDate(baseDate),
+				nextWeekDate,
+				prevWeekDate
 			});
 		} catch (error) {
 			next(error);
