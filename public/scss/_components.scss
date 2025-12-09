@@ -73,12 +73,6 @@
 		align-items: center;
 		margin-bottom: 1.5rem;
 	}
-
-	&--split {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-		gap: 2rem;
-	}
 }
 
 .icon {
@@ -140,19 +134,8 @@
 	}
 }
 
-.timeline,
 .activity {
-	list-style: none;
-	padding: 0;
-	margin: 0;
-	display: flex;
-	flex-direction: column;
-	gap: 0.75rem;
-}
-
-.activity__tag {
-	font-weight: 600;
-	margin-right: 0.5rem;
+	/* removed - UI deleted */
 }
 
 .calendar-view {

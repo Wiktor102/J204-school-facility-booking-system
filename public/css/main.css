@@ -356,11 +356,7 @@ input[type=radio] {
   align-items: center;
   margin-bottom: 1.5rem;
 }
-.panel--split {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2rem;
-}
+/* removed panel--split styles (no longer used) */
 
 .icon {
   display: block;
@@ -418,20 +414,7 @@ input[type=radio] {
   background: rgba(0, 0, 0, 0.05);
 }
 
-.timeline,
-.activity {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.activity__tag {
-  font-weight: 600;
-  margin-right: 0.5rem;
-}
+/* activity styles removed */
 
 .calendar-view {
   display: flex;

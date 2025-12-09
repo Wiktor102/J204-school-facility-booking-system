@@ -20,30 +20,16 @@ export class DashboardController {
 			);
 
 			let bookingCount = 0;
-			let recentBookings: Array<{
-				equipmentName: string;
-				bookingDate: Date;
-				startTime: string;
-			}> = [];
 
 			if (user) {
 				const bookings = await this.bookingService.listUserBookings(user.id);
 				bookingCount = bookings.filter((b) => b.status === BookingStatus.ACTIVE && !b.isCompleted).length;
-				recentBookings = bookings.slice(0, 3).map((b) => ({
-					equipmentName: b.equipmentName,
-					bookingDate: new Date(b.bookingDate),
-					startTime: b.startTime
-				}));
 			}
-
-			const activity = await this.bookingService.recentActivity();
 
 			res.render("dashboard", {
 				pageTitle: "Panel główny",
 				equipmentSummaries: summaries,
-				bookingCount,
-				recentBookings,
-				activity
+				bookingCount
 			});
 		} catch (error) {
 			next(error);

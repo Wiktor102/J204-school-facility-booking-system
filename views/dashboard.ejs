@@ -37,44 +37,5 @@
       <% }) %>
     </div>
   </section>
-
-  <section class="panel panel--split">
-    <div>
-      <header class="panel__header">
-        <p class="eyebrow">Ostatnie działania</p>
-        <h2>Moje ostatnie rezerwacje</h2>
-      </header>
-      <ul class="timeline">
-        <% if (!recentBookings.length) { %>
-          <li class="timeline__item">Nie masz jeszcze żadnych rezerwacji.</li>
-        <% } %>
-        <% recentBookings.forEach((booking) => { %>
-          <li class="timeline__item">
-            <strong><%= booking.equipmentName %></strong>
-            <span><%= booking.bookingDate.toLocaleDateString('pl-PL') %> • <%= booking.startTime %></span>
-          </li>
-        <% }) %>
-      </ul>
-    </div>
-    <div>
-      <header class="panel__header">
-        <p class="eyebrow">Co dzieje się teraz</p>
-        <h2>Aktywność społeczności</h2>
-      </header>
-      <ul class="activity">
-        <% activity.forEach((item) => { %>
-          <li>
-            <span class="activity__tag"><%= item.userName %></span>
-            <p>
-              zarezerwował(a)
-              <strong><%= item.equipmentName %></strong>
-              na <%= new Date(item.bookingDate).toLocaleDateString('pl-PL') %>
-              o <%= item.startTime %>
-            </p>
-          </li>
-        <% }) %>
-      </ul>
-    </div>
-  </section>
 </main>
 <%- include('partials/footer') %>

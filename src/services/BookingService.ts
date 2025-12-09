@@ -181,13 +181,7 @@ export class BookingService {
 		return list.map((b) => ({ ...b, isCompleted: isCompletedBooking(b) }));
 	}
 
-	async recentActivity(): Promise<BookingWithNames[]> {
-		const list = await this.bookings.recentActivity(5);
-		return list.map((b) => ({
-			...b,
-			userName: anonymizeName(b.userName)
-		}));
-	}
+	// recentActivity removed - activity panel removed from dashboard
 }
 
 function anonymizeName(fullName: string): string {

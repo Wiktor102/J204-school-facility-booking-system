@@ -91,29 +91,7 @@ export class BookingRepository {
 		}));
 	}
 
-	async recentActivity(limit = 5): Promise<BookingWithNames[]> {
-		const [rows] = await this.pool.query<
-			(BookingRow &
-				RowDataPacket & {
-					equipment_name: string;
-					user_name: string;
-				})[]
-		>(
-			`SELECT b.*, e.name as equipment_name, CONCAT(u.first_name, ' ', u.last_name) as user_name
-       FROM bookings b
-       JOIN equipment e ON e.id = b.equipment_id
-       JOIN users u ON u.id = b.user_id
-       WHERE b.status = 'active'
-       ORDER BY b.created_at DESC
-       LIMIT ?`,
-			[limit]
-		);
-		return rows.map((row) => ({
-			...mapBooking(row),
-			equipmentName: row.equipment_name,
-			userName: row.user_name
-		}));
-	}
+	// recentActivity removed - not used after activity panel removal
 
 	async listAllWithFilters(params: {
 		equipmentId?: number;
