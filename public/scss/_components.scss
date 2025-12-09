@@ -50,14 +50,6 @@
 		font-family: $font-display;
 		margin: 0;
 	}
-
-	&__card {
-		background: $color-primary;
-		color: #fff;
-		border-radius: 1.5rem;
-		padding: 2rem;
-		@include mixins.card-shadow;
-	}
 }
 
 .panel {
