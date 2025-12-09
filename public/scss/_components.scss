@@ -1,5 +1,6 @@
 @use "variables" as *;
 @use "mixins";
+@use "sass:color";
 
 .btn {
 	border: none;
@@ -340,7 +341,7 @@
 	&--own {
 		background: rgba($slot-own, 0.2);
 		border: 1px solid $slot-own;
-		color: darken($slot-own, 15%);
+		color: color.adjust($slot-own, $lightness: -15%);
 	}
 
 	&--completed {
