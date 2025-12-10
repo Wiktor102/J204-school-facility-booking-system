@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import isDocker from "is-docker";
 
 dotenv.config();
 
@@ -15,7 +16,7 @@ export const env = {
 	port: Number(process.env.PORT ?? 3000),
 	db: {
 		host: requireEnv("DB_HOST", "localhost"),
-		port: 3306, // Na sztywno bo to port wewnetrzny w kontenerze
+		port: isDocker() ? 3306 : Number(process.env.DB_PORT ?? 3306),
 		name: requireEnv("DB_NAME", "facility_booking"),
 		user: requireEnv("DB_USER", "booking_user"),
 		password: requireEnv("DB_PASSWORD", "")
