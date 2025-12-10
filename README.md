@@ -33,10 +33,6 @@ Warstwa widoku została przygotowana z użyciem szablonów **EJS** oraz własnyc
 
 ## 🚀 Instrukcja instalacji i uruchomienia
 
-### ⚠️ Wymagania wstępne
-
-- Środowisko Docker
-
 ### 📥 1. Klonowanie repozytorium
 
 ```bash
@@ -44,43 +40,126 @@ git clone https://github.com/Wiktor102/J204-school-facility-booking-system.git
 cd J204-school-facility-booking-system
 ```
 
-### ⚙️ 2. Konfiguracja środowiska
+### 🐳 Uruchomienie za pomocą Docker (zalecane)
 
-Skonfiguruj w katalogu głównym plik zmiennych środowiskowych `.env`. Możesz skopiować plik `.env.example` i dostosować wartości.
+Najprostszym sposobem uruchomienia aplikacji jest użycie Docker Compose, który uruchamia zarówno aplikację jak i bazę danych w kontenerach.
 
-Poniżej znajduje się szczegółowy opis dostępnych zmiennych środowiskowych używanych przez aplikację w przypadku uruchomienia za pomocą Docker Compose.
+👉 **Szczegółowa instrukcja znajduje się w pliku [docker.md](docker.md).**
 
-Zalecenie: w środowisku produkcyjnym zawsze ustawiaj bezpieczne wartości dla sekretów (np. `SESSION_SECRET`) i innych haseł.
+---
+
+### 💻 Uruchomienie w trybie deweloperskim
+
+W trybie deweloperskim aplikacja Node.js uruchamiana jest lokalnie na komputerze, natomiast baza danych działa w kontenerze Docker.
+
+#### ⚠️ Wymagania wstępne
+
+- **Node.js** (v18 lub nowszy)
+- **npm** (instalowany razem z Node.js)
+- **Docker** (do uruchomienia bazy danych)
+
+#### ⚙️ 1. Konfiguracja środowiska
+
+Utwórz plik `.env` w katalogu głównym projektu (możesz skopiować `.env.example`).
+
+> **Ważne**: Podczas uruchamiania aplikacji lokalnie (poza Dockerem), zmienne środowiskowe są odczytywane z pliku `.env` przez bibliotekę `dotenv`. Gdy aplikacja działa w kontenerze Docker, zmienne są przekazywane bezpośrednio przez Docker Compose.
+
+Minimalna konfiguracja dla trybu deweloperskiego:
+
+```env
+# Tryb uruchomienia
+NODE_ENV=development
+
+# Port aplikacji
+PORT=3000
+
+# Konfiguracja bazy danych
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=facility_booking
+DB_USER=booking_user
+DB_PASSWORD=twoje_haslo
+DB_ROOT_PASSWORD=root_password_here
+
+# Sesja
+SESSION_SECRET=development_secret_change_in_production
+SESSION_MAX_AGE=86400000
+
+# Strefa czasowa
+TZ=Europe/Warsaw
+```
 
 | Zmienna | Opis | Przykład / Domyślna |
 |---|---|---|
-| `NODE_ENV` | Tryb uruchomienia aplikacji. Wpływa na logowanie i inne zachowania. | `development` (domyślnie) |
+| `NODE_ENV` | Tryb uruchomienia aplikacji. | `development` |
 | `PORT` | Port HTTP, na którym nasłuchuje aplikacja. | `3000` |
 | `TZ` | Strefa czasowa używana przez aplikację. | `Europe/Warsaw` |
-| `DB_PORT` | Port **zewnętrzny** kontenera serwera bazy danych. Wewnętrzny zawsze `3306`. | `3306` |
+| `DB_HOST` | Host bazy danych. Lokalnie: `localhost`, w Dockerze: nazwa serwisu. | `localhost` |
+| `DB_PORT` | Port bazy danych. | `3306` |
 | `DB_NAME` | Nazwa bazy danych. | `facility_booking` |
-| `DB_USER` | Nazwa użytkownika bazy danych używana przez aplikację. | `booking_user` |
-| `DB_PASSWORD` | Hasło użytkownika bazy danych. | (brak / ustawione przez Ciebie) |
-| `DB_ROOT_PASSWORD` | Hasło roota bazy. | `root_password_here` |
-| `SESSION_SECRET` | Sekret sesji (używany przez Express session). Ustaw losowy, długi ciąg znaków w produkcji. | `change_me` (zmienić w produkcji) |
-| `SESSION_MAX_AGE` | Maksymalny czas trwania sesji w ms (liczba całkowita). | `86400000` (24 godziny) |
+| `DB_USER` | Nazwa użytkownika bazy danych. | `booking_user` |
+| `DB_PASSWORD` | Hasło użytkownika bazy danych. | (ustaw własne) |
+| `DB_ROOT_PASSWORD` | Hasło roota bazy (wymagane przez kontener MariaDB). | (ustaw własne) |
+| `SESSION_SECRET` | Sekret sesji (używany przez Express session). | `change_me` |
+| `SESSION_MAX_AGE` | Maksymalny czas trwania sesji w ms. | `86400000` |
 
-### 🐳 3. Uruchomienie kontenerów
+#### 🗄️ 2. Uruchomienie bazy danych
 
-Poniższa komenda uruchamia zarówno aplikację jak i bazę danych.
+Uruchom **tylko** kontener z bazą danych:
 
 ```bash
-docker compose up -d --build
+docker compose up -d mariadb
 ```
 
-Serwer powinien nasłuchiwać np. na `http://localhost:3000` (dokładny port zależy od konfiguracji).
+Poczekaj, aż baza danych będzie gotowa (możesz sprawdzić status: `docker compose ps`).
 
-### 🗄️ 4. Inicjalizacja bazy danych (tylko przy pierwszym uruchomieniu)
+#### 📦 3. Instalacja zależności
 
-W katalogu `scripts/` znajduje się plik `schema.sql` zawierający definicję tabel oraz `seed.mjs` do wypełniania bazy przykładowymi danymi. Masz 2 opcje:
+```bash
+npm install
+```
 
-1. Uruchomić skrypt `schema.sql` w bazie danych (np. przez klienta SQL lub narzędzie linii komend). Stworzona zostanie wyłącznie struktura (tabele). Dane początkowe należy wprowadzić samodzielnie.
-2. (Zalecane) uruchom skrypt seedujący, który zarówno wczyta strukturę jak i przykładowe dane: `node .\scripts\seed.mjs`. **UWAGA: przed wykonaniem skryptu należy zainstalować zależności `npm i`**.
+#### 🌱 4. Inicjalizacja bazy danych (tylko przy pierwszym uruchomieniu)
+
+Uruchom skrypt seedujący, który utworzy tabele i wypełni bazę przykładowymi danymi:
+
+```bash
+npm run seed
+```
+
+Domyślne konta utworzone przez skrypt `seed.mjs`:
+
+- Administrator:
+  - Email: `admin@szkola.pl`
+  - Hasło: `Admin123!`
+- Uczeń (przykładowy użytkownik):
+  - Email: `student@example.com`
+  - Hasło: `Student123!`
+
+Uwaga: Możesz zmienić te wartości modyfikując plik `scripts/seed.mjs` przed uruchomieniem skryptu seedującego (hasła są hashowane przy użyciu bcrypt).
+
+Alternatywnie możesz ręcznie wykonać skrypt `scripts/schema.sql` w kliencie SQL.
+
+#### 🚀 5. Uruchomienie aplikacji
+
+Uruchom serwer deweloperski z automatycznym przeładowaniem (hot reload):
+
+```bash
+npm run dev
+```
+
+Aplikacja będzie dostępna pod adresem `http://localhost:3000`.
+
+#### 📝 Dodatkowe komendy
+
+| Komenda | Opis |
+|---|---|
+| `npm run dev` | Uruchamia serwer deweloperski z hot reload |
+| `npm run build` | Kompiluje TypeScript do JavaScript |
+| `npm run start` | Uruchamia skompilowaną aplikację (produkcja) |
+| `npm run lint` | Sprawdza kod pod kątem błędów ESLint |
+| `npm run pretty` | Formatuje kod za pomocą Prettier |
+| `npm run sass` | Kompiluje pliki SCSS do CSS |
 
 ---
 
