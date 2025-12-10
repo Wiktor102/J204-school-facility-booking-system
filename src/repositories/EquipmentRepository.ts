@@ -30,7 +30,6 @@ export class EquipmentRepository {
 
 	async create(data: {
 		name: string;
-		location: string;
 		iconName: string;
 		accentColor: string;
 		dailyStartHour: number;
@@ -39,11 +38,10 @@ export class EquipmentRepository {
 		maxDurationMinutes: number;
 	}): Promise<number> {
 		const [result] = await this.pool.query<ResultSetHeader>(
-			`INSERT INTO equipment (name, location, icon_name, accent_color, daily_start_hour, daily_end_hour, min_duration_minutes, max_duration_minutes)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+			`INSERT INTO equipment (name, icon_name, accent_color, daily_start_hour, daily_end_hour, min_duration_minutes, max_duration_minutes)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
 			[
 				data.name,
-				data.location,
 				data.iconName,
 				data.accentColor,
 				data.dailyStartHour,
@@ -58,7 +56,6 @@ export class EquipmentRepository {
 	async update(id: number, fields: Partial<Equipment>): Promise<void> {
 		const allowed: Record<string, unknown> = {
 			name: fields.name,
-			location: fields.location,
 			icon_name: fields.iconName,
 			accent_color: fields.accentColor,
 			daily_start_hour: fields.dailyStartHour,

@@ -30,9 +30,6 @@
           <label>Nazwa
             <input type="text" name="name" required />
           </label>
-          <label>Lokalizacja
-            <input type="text" name="location" required />
-          </label>
           <label>Ikona (słowo kluczowe)
             <input type="text" name="iconName" required />
           </label>
@@ -62,7 +59,6 @@
           <thead>
             <tr>
               <th>Nazwa</th>
-              <th>Lokalizacja</th>
               <th>Godziny</th>
               <th>Status</th>
               <th>Akcje</th>
@@ -72,7 +68,6 @@
             <% equipment.forEach((item) => { %>
               <tr>
                 <td><%= item.name %></td>
-                <td><%= item.location %></td>
                 <td><%= item.dailyStartHour %>:00 - <%= item.dailyEndHour %>:00</td>
                 <td>
                   <% if (item.isActive) { %>
@@ -87,7 +82,6 @@
                     type="button"
                     data-id="<%= item.id %>"
                     data-name="<%= item.name %>"
-                    data-location="<%= item.location %>"
                     data-icon-name="<%= item.iconName %>"
                     data-accent-color="<%= item.accentColor %>"
                     data-daily-start-hour="<%= item.dailyStartHour %>"
@@ -143,9 +137,6 @@
       <div class="form-grid">
         <label>Nazwa
           <input type="text" name="name" id="editName" required />
-        </label>
-        <label>Lokalizacja
-          <input type="text" name="location" id="editLocation" required />
         </label>
         <label>Ikona (słowo kluczowe)
           <input type="text" name="iconName" id="editIconName" required />

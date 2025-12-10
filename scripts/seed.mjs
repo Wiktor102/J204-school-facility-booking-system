@@ -53,25 +53,23 @@ async function seedDatabase() {
 		);
 
 		await connection.query(
-			`INSERT INTO equipment (name, location, icon_name, accent_color, daily_start_hour, daily_end_hour, min_duration_minutes, max_duration_minutes)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+			`INSERT INTO equipment (name, icon_name, accent_color, daily_start_hour, daily_end_hour, min_duration_minutes, max_duration_minutes)
+       VALUES (?, ?, ?, ?, ?, ?, ?)
        ON DUPLICATE KEY UPDATE 
         name = VALUES(name), 
-        location = VALUES(location), 
         icon_name = VALUES(icon_name), 
         accent_color = VALUES(accent_color)`,
-			["Stół bilardowy", "Świetlica uczniowska, 2. piętro", "pool-table", "#00d9ff", 14, 22, 60, 120]
+			["Stół bilardowy", "pool-table", "#00d9ff", 8, 16, 45, 120]
 		);
 
 		await connection.query(
-			`INSERT INTO equipment (name, location, icon_name, accent_color, daily_start_hour, daily_end_hour, min_duration_minutes, max_duration_minutes)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+			`INSERT INTO equipment (name, icon_name, accent_color, daily_start_hour, daily_end_hour, min_duration_minutes, max_duration_minutes)
+       VALUES (?, ?, ?, ?, ?, ?, ?)
        ON DUPLICATE KEY UPDATE 
         name = VALUES(name), 
-        location = VALUES(location), 
         icon_name = VALUES(icon_name), 
         accent_color = VALUES(accent_color)`,
-			["Kącik gamingowy PS5", "Świetlica uczniowska, 2. piętro", "gamepad", "#39ff14", 14, 22, 60, 180]
+			["Kącik gamingowy PS5", "gamepad", "#39ff14", 8, 16, 15, 60]
 		);
 
 		console.log("✓ Baza została poprawnie zasilona danymi.");

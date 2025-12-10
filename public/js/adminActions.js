@@ -124,7 +124,6 @@
 				const id = btn.dataset.id;
 				document.getElementById("editId").value = id;
 				document.getElementById("editName").value = btn.dataset.name;
-				document.getElementById("editLocation").value = btn.dataset.location;
 				document.getElementById("editIconName").value = btn.dataset.iconName;
 				document.getElementById("editAccentColor").value = btn.dataset.accentColor;
 				document.getElementById("editDailyStartHour").value = btn.dataset.dailyStartHour;
@@ -148,7 +147,6 @@
 				const id = document.getElementById("editId").value;
 				const data = {
 					name: document.getElementById("editName").value,
-					location: document.getElementById("editLocation").value,
 					iconName: document.getElementById("editIconName").value,
 					accentColor: document.getElementById("editAccentColor").value,
 					dailyStartHour: document.getElementById("editDailyStartHour").value,

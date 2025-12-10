@@ -32,7 +32,6 @@ export class AdminController {
 		try {
 			const payload = {
 				name: req.body?.name,
-				location: req.body?.location,
 				iconName: req.body?.iconName,
 				accentColor: req.body?.accentColor,
 				dailyStartHour: Number(req.body?.dailyStartHour ?? 14),
@@ -62,7 +61,6 @@ export class AdminController {
 			const expectsJson = this.expectsJson(req);
 			const updated = await this.adminService.updateEquipment(id, {
 				name: req.body?.name,
-				location: req.body?.location,
 				iconName: req.body?.iconName,
 				accentColor: req.body?.accentColor,
 				dailyStartHour: this.toOptionalNumber(req.body?.dailyStartHour),

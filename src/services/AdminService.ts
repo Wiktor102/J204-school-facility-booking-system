@@ -15,7 +15,6 @@ export class AdminService {
 
 	async addEquipment(data: {
 		name: string;
-		location: string;
 		iconName: string;
 		accentColor: string;
 		dailyStartHour: number;
@@ -23,7 +22,7 @@ export class AdminService {
 		minDurationMinutes: number;
 		maxDurationMinutes: number;
 	}): Promise<number> {
-		const validation = validate([validateName(data.name, "Nazwa"), validateName(data.location, "Lokalizacja")]);
+		const validation = validate([validateName(data.name, "Nazwa")]);
 		if (!validation.isValid) {
 			throw new ValidationAppError("Błędne dane sprzętu", validation.errors);
 		}

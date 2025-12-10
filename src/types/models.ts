@@ -20,7 +20,6 @@ export interface User {
 export interface Equipment {
 	id: number;
 	name: string;
-	location: string;
 	iconName: string;
 	accentColor: string;
 	isActive: boolean;

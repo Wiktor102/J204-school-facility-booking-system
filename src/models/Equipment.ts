@@ -3,7 +3,6 @@ import type { Equipment } from "../types/models.js";
 export interface EquipmentRow {
 	id: number;
 	name: string;
-	location: string;
 	icon_name: string;
 	accent_color: string;
 	is_active: number;
@@ -18,7 +17,6 @@ export function mapEquipment(row: EquipmentRow): Equipment {
 	return {
 		id: row.id,
 		name: row.name,
-		location: row.location,
 		iconName: row.icon_name,
 		accentColor: row.accent_color,
 		isActive: !!row.is_active,
