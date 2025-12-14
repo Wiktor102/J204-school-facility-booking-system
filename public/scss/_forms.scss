@@ -88,9 +88,8 @@ label {
 /* Admin Filter Bar */
 .filter-bar {
 	display: flex;
-	flex-wrap: wrap;
-	gap: 0.75rem;
-	align-items: center;
+	flex-direction: column;
+	gap: 1rem;
 	background: #fff;
 	padding: 1rem;
 	border-radius: 1rem;
@@ -105,6 +104,127 @@ label {
 
 	.btn {
 		padding: 0.65rem 1.25rem;
+	}
+
+	&__section {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	&__section--filters {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	&__section--sorting {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	&__heading {
+		font-size: 0.8rem;
+		font-weight: 600;
+		color: #475569;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		margin: 0;
+	}
+
+	&__controls {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	&__field {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+
+		span {
+			font-size: 0.75rem;
+			color: #64748b;
+		}
+
+		input,
+		select {
+			min-width: 140px;
+		}
+
+		&--search input {
+			min-width: 200px;
+		}
+	}
+
+	&__actions {
+		display: flex;
+		gap: 0.5rem;
+		align-items: center;
+		flex-wrap: wrap;
+	}
+
+	&__sorting {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+
+		label {
+			display: flex;
+			flex-direction: column;
+			gap: 0.25rem;
+			font-size: 0.85rem;
+			color: #475569;
+		}
+	}
+
+	@media (min-width: 1024px) {
+		flex-direction: row;
+		align-items: flex-start;
+		justify-content: space-between;
+		flex-wrap: wrap;
+
+		&__section {
+			flex: 1 1 auto;
+			display: flex;
+			flex-direction: column;
+			gap: 0.75rem;
+		}
+
+		&__section--filters {
+			flex: 1 1 auto;
+		}
+
+		&__section--sorting {
+			flex: 0 0 auto;
+		}
+
+		&__controls {
+			display: grid;
+			grid-template-columns: auto auto auto 1fr;
+			gap: 0.75rem;
+			align-items: end;
+		}
+
+		&__field {
+			display: flex;
+			flex-direction: column;
+			gap: 0.25rem;
+		}
+
+		&__sorting {
+			flex-direction: row;
+			align-items: flex-end;
+			gap: 1rem;
+
+			label {
+				flex-direction: column;
+				gap: 0.25rem;
+				margin: 0;
+			}
+		}
 	}
 }
 
@@ -143,17 +263,19 @@ input[type="radio"] {
 /* Grid helpers for forms: allow short inputs to align next to each other */
 .form-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	grid-template-columns: 1fr;
 	gap: 1rem;
 }
 
 .form-grid--compact {
-	grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+	grid-template-columns: 1fr;
+	gap: 0.75rem;
 }
 
-@media (max-width: $breakpoint-tablet) {
-	.form-grid {
-		grid-template-columns: 1fr;
+@media (min-width: 1024px) {
+	.form-grid--compact {
+		grid-template-columns: 1fr 1fr;
+		gap: 0.75rem;
 	}
 }
 

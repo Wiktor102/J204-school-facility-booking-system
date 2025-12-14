@@ -9,29 +9,63 @@
       <a class="btn btn--ghost" href="/admin/export">Eksportuj CSV</a>
     </header>
     <form class="filter-bar" method="get" action="/admin/bookings">
-      <select name="equipment">
-        <option value="">Wszystkie sprzęty</option>
-        <% equipment.forEach((item) => { %>
-          <option value="<%= item.id %>" <%= filters.equipmentId === item.id ? 'selected' : '' %>>
-            <%= item.name %>
-          </option>
-        <% }) %>
-      </select>
-      <div class="form-grid form-grid--compact">
-        <input type="date" name="dateFrom" value="<%= filters.dateFrom || '' %>" />
-        <input type="date" name="dateTo" value="<%= filters.dateTo || '' %>" />
+      <div class="filter-bar__section filter-bar__section--filters">
+        <p class="filter-bar__heading">Filtry</p>
+        <div class="filter-bar__controls">
+          <label class="filter-bar__field">
+            <span>Sprzęt:</span>
+            <select name="equipment">
+              <option value="">Wszystkie sprzęty</option>
+              <% equipment.forEach((item) => { %>
+                <option value="<%= item.id %>" <%= filters.equipmentId === item.id ? 'selected' : '' %>>
+                  <%= item.name %>
+                </option>
+              <% }) %>
+            </select>
+          </label>
+          <label class="filter-bar__field">
+            <span>Od:</span>
+            <input type="date" name="dateFrom" value="<%= filters.dateFrom || '' %>" />
+          </label>
+          <label class="filter-bar__field">
+            <span>Do:</span>
+            <input type="date" name="dateTo" value="<%= filters.dateTo || '' %>" />
+          </label>
+          <label class="filter-bar__field filter-bar__field--search">
+            <span>Szukaj ucznia:</span>
+            <input
+              type="text"
+              name="student"
+              placeholder="Imię, nazwisko lub email"
+              value="<%= filters.student || '' %>"
+            />
+          </label>
+        </div>
+        <div class="filter-bar__actions">
+          <button class="btn btn--primary" type="submit">Zastosuj filtry</button>
+          <a class="btn btn--ghost" href="/admin/bookings">Wyczyść</a>
+        </div>
       </div>
-      <input type="text" name="student" placeholder="Uczeń" value="<%= filters.student || '' %>" />
-      <select name="sort">
-        <option value="date" <%= filters.sort === 'date' ? 'selected' : '' %>>Data</option>
-        <option value="student" <%= filters.sort === 'student' ? 'selected' : '' %>>Uczeń</option>
-        <option value="equipment" <%= filters.sort === 'equipment' ? 'selected' : '' %>>Sprzęt</option>
-      </select>
-      <select name="order">
-        <option value="asc" <%= filters.order === 'asc' ? 'selected' : '' %>>Rosnąco</option>
-        <option value="desc" <%= filters.order === 'desc' ? 'selected' : '' %>>Malejąco</option>
-      </select>
-      <button class="btn btn--primary" type="submit">Filtruj</button>
+      <div class="filter-bar__section filter-bar__section--sorting">
+        <p class="filter-bar__heading">Sortowanie</p>
+        <div class="filter-bar__sorting">
+          <label>
+            <span>Kolejność:</span>
+            <select name="sort" onchange="this.form.submit()">
+              <option value="date" <%= filters.sort === 'date' ? 'selected' : '' %>>Data</option>
+              <option value="student" <%= filters.sort === 'student' ? 'selected' : '' %>>Uczeń</option>
+              <option value="equipment" <%= filters.sort === 'equipment' ? 'selected' : '' %>>Sprzęt</option>
+            </select>
+          </label>
+          <label>
+            <span>Kierunek:</span>
+            <select name="order" onchange="this.form.submit()">
+              <option value="asc" <%= filters.order === 'asc' ? 'selected' : '' %>>Rosnąco</option>
+              <option value="desc" <%= filters.order === 'desc' ? 'selected' : '' %>>Malejąco</option>
+            </select>
+          </label>
+        </div>
+      </div>
     </form>
     <div class="table-wrapper">
       <table>

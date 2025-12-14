@@ -119,9 +119,9 @@ export class BookingRepository {
 			values.push(params.dateTo);
 		}
 		if (params.student) {
-			conditions.push("(u.first_name LIKE ? OR u.email LIKE ?)");
+			conditions.push("(u.first_name LIKE ? OR u.last_name LIKE ? OR u.email LIKE ? OR CONCAT(u.first_name, ' ', u.last_name) LIKE ?)");
 			const like = `%${params.student}%`;
-			values.push(like, like);
+			values.push(like, like, like, like);
 		}
 
 		const whereClause = conditions.length ? `WHERE ${conditions.join(" AND ")}` : "";
