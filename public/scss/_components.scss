@@ -299,6 +299,7 @@
 		flex: 1;
 		min-height: 280px;
 		cursor: pointer;
+		overflow: visible;
 
 		&:hover {
 			background: rgba($slot-available, 0.05);
@@ -360,6 +361,100 @@
 
 	&--completed {
 		opacity: 0.5;
+	}
+
+	// Hover/active: make event backgrounds solid to avoid unreadable overlaps
+	&:hover,
+	&.calendar-event--active {
+		z-index: 10;
+		box-shadow: 0 4px 16px rgba(15, 23, 42, 0.18);
+		transition: all 0.15s ease;
+	}
+
+	&--booking:hover,
+	&--booking.calendar-event--active {
+		background: $slot-booked;
+		color: #fff;
+		border-color: color.adjust($slot-booked, $lightness: -20%);
+	}
+
+	&--own:hover,
+	&--own.calendar-event--active {
+		background: $slot-own;
+		color: #fff;
+		border-color: color.adjust($slot-own, $lightness: -20%);
+	}
+
+	&--blocked:hover,
+	&--blocked.calendar-event--active {
+		background: #dc2626;
+		color: #fff;
+		border-color: color.adjust(#dc2626, $lightness: -10%);
+	}
+
+	// Compact booking styles for short durations (<1 hour)
+	&--compact {
+		&:hover,
+		&.calendar-event--active {
+			min-height: 3rem;
+			z-index: 10;
+			box-shadow: 0 4px 16px rgba(15, 23, 42, 0.18);
+			transition: all 0.2s ease;
+
+			// Tooltip - default position above the event
+			&::after {
+				content: attr(data-tooltip);
+				position: absolute;
+				bottom: calc(100% + 8px);
+				left: 50%;
+				transform: translateX(-50%);
+				background: #ffffff;
+				color: $color-text;
+				border: 1px solid rgba(15, 23, 42, 0.1);
+				border-radius: 0.35rem;
+				padding: 0.5rem 0.75rem;
+				font-size: 0.7rem;
+				white-space: nowrap;
+				z-index: 11;
+				box-shadow: 0 4px 16px rgba(15, 23, 42, 0.15);
+				pointer-events: none;
+				font-weight: 500;
+			}
+
+			// Arrow pointer for tooltip - default above
+			&::before {
+				content: "";
+				position: absolute;
+				bottom: calc(100% + 2px);
+				left: 50%;
+				transform: translateX(-50%);
+				width: 0;
+				height: 0;
+				border-left: 4px solid transparent;
+				border-right: 4px solid transparent;
+				border-top: 4px solid #ffffff;
+				z-index: 11;
+				pointer-events: none;
+			}
+		}
+	}
+
+	// Flip tooltip to bottom for events at top of timeline
+	&--top {
+		&:hover,
+		&.calendar-event--active {
+			&::after {
+				bottom: auto;
+				top: calc(100% + 8px);
+			}
+
+			&::before {
+				bottom: auto;
+				top: calc(100% + 2px);
+				border-top: none;
+				border-bottom: 4px solid #ffffff;
+			}
+		}
 	}
 }
 

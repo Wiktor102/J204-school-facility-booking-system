@@ -56,12 +56,17 @@
               const totalMinutes = dayEndMinutes - dayStartMinutes;
               const topPercent = ((startMinutes - dayStartMinutes) / totalMinutes) * 100;
               const heightPercent = ((endMinutes - startMinutes) / totalMinutes) * 100;
+              let label = 'Zajęte';
+              if (event.isOwn) label = 'Twoja rezerwacja';
+              else if (event.type === 'blocked') label = event.reason || 'Zablokowane';
+              const tooltipText = `${event.startTime} - ${event.endTime} | ${label}`;
             %>
               <div class="calendar-event calendar-event--<%= event.type %> <%= event.isOwn ? 'calendar-event--own' : '' %> <%= event.isCompleted ? 'calendar-event--completed' : '' %>"
                    style="top: <%= topPercent %>%; height: <%= heightPercent %>%;"
                    data-event-id="<%= event.id %>"
                    data-start="<%= event.startTime %>"
-                   data-end="<%= event.endTime %>">
+                   data-end="<%= event.endTime %>"
+                   data-tooltip="<%= tooltipText %>">
                 <span class="calendar-event__time"><%= event.startTime %> - <%= event.endTime %></span>
                 <% if (event.isOwn) { %>
                   <small>Twoja rezerwacja</small>

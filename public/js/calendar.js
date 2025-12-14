@@ -68,6 +68,7 @@ if (calendar && bookingForm) {
 
 	let pendingDate = null;
 	let pendingEvents = [];
+	let activeCompactEvent = null;
 
 	const startTimeInput = modal.querySelector("#modal-start-time");
 	const durationInput = modal.querySelector("#modal-duration");
@@ -143,6 +144,44 @@ if (calendar && bookingForm) {
 	startTimeInput.addEventListener("input", updatePreview);
 	durationInput.addEventListener("input", updatePreview);
 
+	// Handle touch interactions for compact events
+	document.addEventListener("touchstart", (e) => {
+		const compactEvent = e.target.closest(".calendar-event--compact");
+		if (!compactEvent) return;
+
+		e.stopPropagation();
+
+		// If this is a different event, deactivate the previous one
+		if (activeCompactEvent && activeCompactEvent !== compactEvent) {
+			activeCompactEvent.classList.remove("calendar-event--active");
+		}
+
+		// Toggle active state on the touched event
+		if (compactEvent.classList.contains("calendar-event--active")) {
+			// Second tap - deactivate
+			compactEvent.classList.remove("calendar-event--active");
+			activeCompactEvent = null;
+		} else {
+			// First tap - activate
+			compactEvent.classList.add("calendar-event--active");
+			activeCompactEvent = compactEvent;
+		}
+	});
+
+	// Close active compact event when clicking outside
+	document.addEventListener("click", (e) => {
+		// Don't close if clicking on the compact event itself
+		if (e.target.closest(".calendar-event--compact")) return;
+
+		if (activeCompactEvent) {
+			activeCompactEvent.classList.remove("calendar-event--active");
+			activeCompactEvent = null;
+		}
+	});
+
+	startTimeInput.addEventListener("input", updatePreview);
+	durationInput.addEventListener("input", updatePreview);
+
 	// Click on timeline to create booking
 	document.querySelectorAll(".calendar-day__timeline").forEach((timeline) => {
 		timeline.addEventListener("click", (e) => {
@@ -185,6 +224,35 @@ if (calendar && bookingForm) {
 			modal.classList.remove("is-hidden");
 		});
 	});
+
+	// Update compact/top classes based on pixel thresholds
+	function updateCompactClasses() {
+		const THRESHOLD_PX = 32;
+		const TOP_THRESHOLD_PX = 40;
+		document.querySelectorAll(".calendar-day__timeline").forEach((timeline) => {
+			const timelineRect = timeline.getBoundingClientRect();
+			timeline.querySelectorAll(".calendar-event").forEach((ev) => {
+				const rect = ev.getBoundingClientRect();
+				const height = rect.height;
+				if (height < THRESHOLD_PX) {
+					ev.classList.add("calendar-event--compact");
+				} else {
+					ev.classList.remove("calendar-event--compact");
+				}
+
+				const topFromTimeline = rect.top - timelineRect.top;
+				if (topFromTimeline < TOP_THRESHOLD_PX) {
+					ev.classList.add("calendar-event--top");
+				} else {
+					ev.classList.remove("calendar-event--top");
+				}
+			});
+		});
+	}
+
+	// Run on load and on resize
+	updateCompactClasses();
+	window.addEventListener("resize", updateCompactClasses);
 
 	modal.querySelector("[data-confirm]").addEventListener("click", async () => {
 		if (!pendingDate) return;

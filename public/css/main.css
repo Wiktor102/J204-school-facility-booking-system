@@ -666,6 +666,7 @@ input[type=radio] {
   flex: 1;
   min-height: 280px;
   cursor: pointer;
+  overflow: visible;
 }
 .calendar-day__timeline:hover {
   background: rgba(16, 185, 129, 0.05);
@@ -719,6 +720,74 @@ input[type=radio] {
 }
 .calendar-event--completed {
   opacity: 0.5;
+}
+.calendar-event:hover, .calendar-event.calendar-event--active {
+  z-index: 10;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.18);
+  transition: all 0.15s ease;
+}
+.calendar-event--booking:hover, .calendar-event--booking.calendar-event--active {
+  background: #374151;
+  color: #fff;
+  border-color: rgb(13.75, 16.25, 20.25);
+}
+.calendar-event--own:hover, .calendar-event--own.calendar-event--active {
+  background: #00d9ff;
+  color: #fff;
+  border-color: rgb(0, 130.2, 153);
+}
+.calendar-event--blocked:hover, .calendar-event--blocked.calendar-event--active {
+  background: #dc2626;
+  color: #fff;
+  border-color: rgb(178.25, 28.75, 28.75);
+}
+.calendar-event--compact:hover, .calendar-event--compact.calendar-event--active {
+  min-height: 3rem;
+  z-index: 10;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.18);
+  transition: all 0.2s ease;
+}
+.calendar-event--compact:hover::after, .calendar-event--compact.calendar-event--active::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ffffff;
+  color: #1f2937;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  border-radius: 0.35rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.7rem;
+  white-space: nowrap;
+  z-index: 11;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.15);
+  pointer-events: none;
+  font-weight: 500;
+}
+.calendar-event--compact:hover::before, .calendar-event--compact.calendar-event--active::before {
+  content: "";
+  position: absolute;
+  bottom: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid #ffffff;
+  z-index: 11;
+  pointer-events: none;
+}
+.calendar-event--top:hover::after, .calendar-event--top.calendar-event--active::after {
+  bottom: auto;
+  top: calc(100% + 8px);
+}
+.calendar-event--top:hover::before, .calendar-event--top.calendar-event--active::before {
+  bottom: auto;
+  top: calc(100% + 2px);
+  border-top: none;
+  border-bottom: 4px solid #ffffff;
 }
 
 .calendar-tips {
