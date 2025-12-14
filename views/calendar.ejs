@@ -30,9 +30,17 @@
 
   <section class="calendar-timeline">
     <div class="calendar-timeline__hours">
-      <% for (let h = equipment.dailyStartHour; h <= equipment.dailyEndHour; h++) { %>
-        <div class="calendar-timeline__hour"><%= String(h).padStart(2, '0') %>:00</div>
-      <% } %>
+      <header class="calendar-day__header">
+        <p class="calendar-day__name">&nbsp;</p>
+        <p class="calendar-day__date">&nbsp;</p>
+      </header>
+      <div class="calendar-timeline__hours-list">
+        <% for (let h = equipment.dailyStartHour; h <= equipment.dailyEndHour; h++) { %>
+          <div class="calendar-timeline__hour">
+            <%= String(h).padStart(2, '0') %>:00
+          </div>
+        <% } %>
+      </div>
     </div>
     <div class="calendar-timeline__days">
       <% weekView.days.forEach((day) => { 

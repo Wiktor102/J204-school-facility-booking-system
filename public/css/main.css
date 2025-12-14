@@ -621,15 +621,31 @@ input[type=radio] {
 .calendar-timeline__hours {
   display: flex;
   flex-direction: column;
-  padding: 2.25rem 0.5rem 0.25rem;
+  padding: 0;
   background: rgba(15, 23, 42, 0.03);
   border-right: 1px solid rgba(15, 23, 42, 0.08);
 }
-.calendar-timeline__hour {
+.calendar-timeline__hours-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   flex: 1;
+  width: 100%;
+  padding: 0 0.5rem;
+}
+.calendar-timeline__hour {
+  height: 0;
+  display: flex;
+  align-items: center;
   font-size: 0.7rem;
   color: #64748b;
-  min-height: 2rem;
+  white-space: nowrap;
+}
+.calendar-timeline__hour:first-child {
+  align-items: flex-start;
+}
+.calendar-timeline__hour:last-child {
+  align-items: flex-end;
 }
 .calendar-timeline__days {
   display: flex;
