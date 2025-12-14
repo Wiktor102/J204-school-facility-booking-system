@@ -24,7 +24,7 @@ Poniżej znajduje się szczegółowy opis dostępnych zmiennych środowiskowych 
 | Zmienna | Opis | Przykład / Domyślna |
 |---|---|---|
 | `NODE_ENV` | Tryb uruchomienia aplikacji. Wpływa na logowanie i inne zachowania. | `development` (domyślnie) |
-| `PORT` | Port HTTP, na którym nasłuchuje aplikacja. | `3000` |
+| `PORT` | **Zewnętrzny** port HTTP kontenera, na którym nasłuchuje aplikacja. Wewnętrzny zawsze `3000`. | `3000` |
 | `TZ` | Strefa czasowa używana przez aplikację. | `Europe/Warsaw` |
 | `DB_PORT` | Port **zewnętrzny** kontenera serwera bazy danych. Wewnętrzny zawsze `3306`. | `3306` |
 | `DB_NAME` | Nazwa bazy danych. | `facility_booking` |

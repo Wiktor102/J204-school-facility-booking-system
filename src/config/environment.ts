@@ -13,7 +13,7 @@ function requireEnv(name: string, fallback?: string): string {
 
 export const env = {
 	nodeEnv: process.env.NODE_ENV ?? "development",
-	port: Number(process.env.PORT ?? 3000),
+	port: isDocker() ? 3000 : Number(process.env.PORT ?? 3000),
 	db: {
 		host: requireEnv("DB_HOST", "localhost"),
 		port: isDocker() ? 3306 : Number(process.env.DB_PORT ?? 3306),
