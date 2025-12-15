@@ -109,6 +109,15 @@ export class AdminController {
 			});
 			res.redirect("/admin");
 		} catch (error) {
+			if (error instanceof ValidationAppError) {
+				res.status(400).render("admin/dashboard", {
+					pageTitle: "Panel administratora",
+					stats: await this.adminService.stats(),
+					equipment: await this.equipmentRepository.listAll(),
+					formError: error.message
+				});
+				return;
+			}
 			next(error);
 		}
 	}
