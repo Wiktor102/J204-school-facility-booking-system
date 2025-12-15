@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import { AuthService } from "../services/AuthService.js";
 import { AuthError, ValidationAppError } from "../utils/errors.js";
+import { BaseController } from "./BaseController.js";
 
 interface AuthViewModel {
 	mode: "login" | "register";
@@ -8,8 +9,10 @@ interface AuthViewModel {
 	formData: Partial<{ email: string; firstName: string; lastName: string }>;
 }
 
-export class AuthController {
-	constructor(private authService: AuthService) {}
+export class AuthController extends BaseController {
+	constructor(private authService: AuthService) {
+		super();
+	}
 
 	showLogin(req: Request, res: Response): void {
 		if (req.session?.userId) {
@@ -31,15 +34,7 @@ export class AuthController {
 			res.redirect("/dashboard");
 		} catch (error) {
 			if (error instanceof ValidationAppError || error instanceof AuthError) {
-				const viewModel: AuthViewModel = {
-					mode: "login",
-					errors: [error.message],
-					formData: { email }
-				};
-				res.status(400).render("auth/login", {
-					pageTitle: "Logowanie do systemu",
-					viewModel
-				});
+				this.renderAuthError(res, "login", [error.message], { email });
 				return;
 			}
 			next(error);
@@ -54,15 +49,11 @@ export class AuthController {
 			res.redirect("/dashboard");
 		} catch (error) {
 			if (error instanceof ValidationAppError) {
-				const viewModel: AuthViewModel = {
-					mode: "register",
-					errors:
-						error.details && Array.isArray(error.details)
-							? error.details.map((item) => item.message)
-							: [error.message],
-					formData: { email, firstName, lastName }
-				};
-				res.status(400).render("auth/login", { pageTitle: "Rejestracja", viewModel });
+				const errors =
+					error.details && Array.isArray(error.details)
+						? error.details.map((item) => item.message)
+						: [error.message];
+				this.renderAuthError(res, "register", errors, { email, firstName, lastName });
 				return;
 			}
 			next(error);
@@ -76,5 +67,19 @@ export class AuthController {
 		} catch (error) {
 			next(error);
 		}
+	}
+
+	/**
+	 * Renders the auth view with error messages and preserved form data.
+	 */
+	private renderAuthError(
+		res: Response,
+		mode: "login" | "register",
+		errors: string[],
+		formData: Partial<{ email: string; firstName: string; lastName: string }>
+	): void {
+		const viewModel: AuthViewModel = { mode, errors, formData };
+		const pageTitle = mode === "login" ? "Logowanie do systemu" : "Rejestracja";
+		res.status(400).render("auth/login", { pageTitle, viewModel });
 	}
 }

@@ -2,12 +2,15 @@ import type { Request, Response, NextFunction } from "express";
 import { EquipmentRepository } from "../repositories/EquipmentRepository.js";
 import { BookingService } from "../services/BookingService.js";
 import { BookingStatus } from "../types/models.js";
+import { BaseController } from "./BaseController.js";
 
-export class DashboardController {
+export class DashboardController extends BaseController {
 	constructor(
 		private equipmentRepository: EquipmentRepository,
 		private bookingService: BookingService
-	) {}
+	) {
+		super();
+	}
 
 	async show(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {

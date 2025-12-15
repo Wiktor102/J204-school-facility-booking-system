@@ -4,12 +4,15 @@ import { EquipmentRepository } from "../repositories/EquipmentRepository.js";
 import { formatDate, addDaysSafe } from "../utils/dateHelpers.js";
 import { ValidationAppError, AppError } from "../utils/errors.js";
 import { BookingStatus } from "../types/models.js";
+import { BaseController } from "./BaseController.js";
 
-export class BookingController {
+export class BookingController extends BaseController {
 	constructor(
 		private bookingService: BookingService,
 		private equipmentRepository: EquipmentRepository
-	) {}
+	) {
+		super();
+	}
 
 	async showCalendar(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
@@ -66,13 +69,10 @@ export class BookingController {
 				endTime
 			});
 
-			this.respond(req, res, {
-				success: true,
-				message: "Rezerwacja została utworzona"
-			});
+			this.respond(req, res, { success: true, message: "Rezerwacja została utworzona" }, 200, "/my-bookings");
 		} catch (error) {
 			if (error instanceof ValidationAppError) {
-				this.respond(req, res, { success: false, message: error.message }, 400);
+				this.respond(req, res, { success: false, message: error.message }, 400, "/my-bookings");
 				return;
 			}
 			next(error);
@@ -86,13 +86,10 @@ export class BookingController {
 			}
 			const id = Number(req.params.id);
 			await this.bookingService.cancelBooking(id, req.currentUser);
-			this.respond(req, res, {
-				success: true,
-				message: "Rezerwacja anulowana"
-			});
+			this.respond(req, res, { success: true, message: "Rezerwacja anulowana" }, 200, "/my-bookings");
 		} catch (error) {
 			if (error instanceof ValidationAppError) {
-				this.respond(req, res, { success: false, message: error.message }, 400);
+				this.respond(req, res, { success: false, message: error.message }, 400, "/my-bookings");
 				return;
 			}
 			next(error);
@@ -118,22 +115,5 @@ export class BookingController {
 		} catch (error) {
 			next(error);
 		}
-	}
-
-	private respond(req: Request, res: Response, payload: Record<string, unknown>, status = 200): void {
-		const isJson = req.headers["content-type"]?.includes("application/json");
-
-		if (isJson) {
-			res.status(status).json(payload);
-			return;
-		}
-
-		if (status >= 400) {
-			const fallback = req.get("referer") ?? "/my-bookings";
-			res.status(status).redirect(fallback);
-			return;
-		}
-
-		res.redirect("/my-bookings");
 	}
 }
