@@ -72,6 +72,18 @@ export class AdminService {
 			throw new ValidationAppError("Godzina rozpoczęcia musi być przed godziną zakończenia");
 		}
 
+		const existingBookings = await this.bookings.findByEquipmentAndDate(data.equipmentId, data.blockDate);
+		for (const booking of existingBookings) {
+			const bookingStart = toMinutes(booking.startTime);
+			const bookingEnd = toMinutes(booking.endTime);
+
+			if (startMinutes < bookingEnd && endMinutes > bookingStart) {
+				throw new ValidationAppError(
+					"Nie można dodać blokady, ponieważ w tym czasie istnieją rezerwacje. Usuń je najpierw."
+				);
+			}
+		}
+
 		return this.bookings.createBlockedSlot(data);
 	}
 
