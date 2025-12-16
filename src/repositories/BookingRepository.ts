@@ -53,7 +53,14 @@ export class BookingRepository {
 
 	async findActiveByUserAndEquipment(userId: number, equipmentId: number): Promise<Booking | null> {
 		const [rows] = await this.pool.query<(BookingRow & RowDataPacket)[]>(
-			`SELECT * FROM bookings WHERE user_id = ? AND equipment_id = ? AND status = 'active' LIMIT 1`,
+			`SELECT *
+			 FROM bookings
+			 WHERE user_id = ?
+			   AND equipment_id = ?
+			   AND status = 'active'
+			   AND TIMESTAMP(booking_date, end_time) > NOW()
+			 ORDER BY booking_date ASC, start_time ASC
+			 LIMIT 1`,
 			[userId, equipmentId]
 		);
 		return rows.length ? mapBooking(rows[0]) : null;
@@ -119,7 +126,9 @@ export class BookingRepository {
 			values.push(params.dateTo);
 		}
 		if (params.student) {
-			conditions.push("(u.first_name LIKE ? OR u.last_name LIKE ? OR u.email LIKE ? OR CONCAT(u.first_name, ' ', u.last_name) LIKE ?)");
+			conditions.push(
+				"(u.first_name LIKE ? OR u.last_name LIKE ? OR u.email LIKE ? OR CONCAT(u.first_name, ' ', u.last_name) LIKE ?)"
+			);
 			const like = `%${params.student}%`;
 			values.push(like, like, like, like);
 		}
