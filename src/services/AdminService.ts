@@ -84,6 +84,16 @@ export class AdminService {
 			}
 		}
 
+		const existingBlocks = await this.bookings.getBlockedSlots(data.equipmentId, data.blockDate);
+		for (const block of existingBlocks) {
+			const blockStart = toMinutes(block.start_time);
+			const blockEnd = toMinutes(block.end_time);
+
+			if (startMinutes < blockEnd && endMinutes > blockStart) {
+				throw new ValidationAppError("W tym czasie istnieje już blokada. Najpierw ją usuń.");
+			}
+		}
+
 		return this.bookings.createBlockedSlot(data);
 	}
 
