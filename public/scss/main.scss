@@ -50,6 +50,21 @@
 	padding: 2rem;
 	border: 2px dashed rgba(26, 35, 50, 0.2);
 	border-radius: 1.5rem;
+
+	// Tidy default spacing for headings and text
+	h3 {
+		margin: 0 0 0.5rem;
+		font-weight: 600;
+	}
+
+	.muted {
+		margin: 0 0 1rem;
+	}
+
+	// Keep buttons nicely spaced in empty states
+	.btn + .btn {
+		margin-left: 0.5rem;
+	}
 }
 
 .admin-grid {

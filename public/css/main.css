@@ -1014,6 +1014,16 @@ table td {
   border: 2px dashed rgba(26, 35, 50, 0.2);
   border-radius: 1.5rem;
 }
+.empty-state h3 {
+  margin: 0 0 0.5rem;
+  font-weight: 600;
+}
+.empty-state .muted {
+  margin: 0 0 1rem;
+}
+.empty-state .btn + .btn {
+  margin-left: 0.5rem;
+}
 
 .admin-grid {
   display: grid;

@@ -27,11 +27,30 @@
         <h2>Sprzęt gotowy do rezerwacji</h2>
       </div>
     </header>
-    <div class="equipment-grid">
-      <% equipmentSummaries.forEach((summary) => { %>
-        <%- include('partials/equipmentCard', { equipment: summary.equipment, slots: summary.slots }) %>
-      <% }) %>
-    </div>
+    <% if (equipmentSummaries.length === 0) { %>
+      <div class="empty-state" style="padding: 2rem; text-align: center;">
+        <h3 style="margin-bottom: .5rem;">Brak dostępnego sprzętu</h3>
+        <% if (currentUser && currentUser.role === 'admin') { %>
+          <p class="muted" style="margin-bottom: 1rem;">
+            Wygląda na to, że żaden sprzęt nie jest dodany lub włączony.
+            Przejdź do panelu administratora, aby dodać nowy sprzęt lub go włączyć.
+          </p>
+          <a class="btn btn--primary" href="/admin">Otwórz panel administratora</a>
+        <% } else { %>
+          <p class="muted" style="margin-bottom: 1rem;">
+            Aktualnie żaden sprzęt nie jest dostępny do rezerwacji. Spróbuj ponownie później
+            lub skontaktuj się z administratorem.
+          </p>
+          <a class="btn btn--ghost" href="/my-bookings">Zobacz moje rezerwacje</a>
+        <% } %>
+      </div>
+    <% } else { %>
+      <div class="equipment-grid">
+        <% equipmentSummaries.forEach((summary) => { %>
+          <%- include('partials/equipmentCard', { equipment: summary.equipment, slots: summary.slots }) %>
+        <% }) %>
+      </div>
+    <% } %>
   </section>
 </main>
 <%- include('partials/footer') %>
