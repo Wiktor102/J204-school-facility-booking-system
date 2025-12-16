@@ -4,7 +4,7 @@ import { fileURLToPath } from "url";
 import { AdminService } from "../services/AdminService.js";
 import { EquipmentRepository } from "../repositories/EquipmentRepository.js";
 import { AppError } from "../utils/errors.js";
-import { validateOpeningHours, validate } from "../utils/validators.js";
+import { validateOpeningHours, validateDurationMinutes, validate } from "../utils/validators.js";
 import { BaseController, type FormErrorContext } from "./BaseController.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -51,11 +51,20 @@ export class AdminController extends BaseController {
 		try {
 			const dailyStartHour = Number(req.body?.dailyStartHour ?? 14);
 			const dailyEndHour = Number(req.body?.dailyEndHour ?? 22);
+			const minDurationMinutes = Number(req.body?.minDurationMinutes ?? 60);
+			const maxDurationMinutes = Number(req.body?.maxDurationMinutes ?? 120);
 
 			// Validate opening hours
 			const hoursValidation = validateOpeningHours(dailyStartHour, dailyEndHour);
 			if (hoursValidation) {
 				const validation = validate([hoursValidation]);
+				throw new AppError(validation.errors[0].message, 400);
+			}
+
+			// Validate duration
+			const durationValidation = validateDurationMinutes(minDurationMinutes, maxDurationMinutes);
+			if (durationValidation) {
+				const validation = validate([durationValidation]);
 				throw new AppError(validation.errors[0].message, 400);
 			}
 
@@ -65,8 +74,8 @@ export class AdminController extends BaseController {
 				accentColor: req.body?.accentColor,
 				dailyStartHour,
 				dailyEndHour,
-				minDurationMinutes: Number(req.body?.minDurationMinutes ?? 60),
-				maxDurationMinutes: Number(req.body?.maxDurationMinutes ?? 120)
+				minDurationMinutes,
+				maxDurationMinutes
 			};
 			await this.adminService.addEquipment(payload);
 			res.redirect("/admin");
@@ -81,6 +90,8 @@ export class AdminController extends BaseController {
 			const id = Number(req.params.id);
 			const dailyStartHour = this.toOptionalNumber(req.body?.dailyStartHour);
 			const dailyEndHour = this.toOptionalNumber(req.body?.dailyEndHour);
+			const minDurationMinutes = this.toOptionalNumber(req.body?.minDurationMinutes);
+			const maxDurationMinutes = this.toOptionalNumber(req.body?.maxDurationMinutes);
 
 			// Validate opening hours if both are provided
 			if (dailyStartHour !== undefined && dailyEndHour !== undefined) {
@@ -91,14 +102,23 @@ export class AdminController extends BaseController {
 				}
 			}
 
+			// Validate duration if both are provided
+			if (minDurationMinutes !== undefined && maxDurationMinutes !== undefined) {
+				const durationValidation = validateDurationMinutes(minDurationMinutes, maxDurationMinutes);
+				if (durationValidation) {
+					const validation = validate([durationValidation]);
+					throw new AppError(validation.errors[0].message, 400);
+				}
+			}
+
 			const updated = await this.adminService.updateEquipment(id, {
 				name: req.body?.name,
 				iconName: req.body?.iconName,
 				accentColor: req.body?.accentColor,
 				dailyStartHour,
 				dailyEndHour,
-				minDurationMinutes: this.toOptionalNumber(req.body?.minDurationMinutes),
-				maxDurationMinutes: this.toOptionalNumber(req.body?.maxDurationMinutes),
+				minDurationMinutes,
+				maxDurationMinutes,
 				isActive: this.toOptionalBoolean(req.body?.isActive)
 			});
 			if (!updated) {

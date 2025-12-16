@@ -39,6 +39,29 @@
 		return null;
 	}
 
+	function validateDurationMinutes(minDuration, maxDuration) {
+		const min = Number(minDuration);
+		const max = Number(maxDuration);
+
+		if (isNaN(min) || isNaN(max)) {
+			return "Czasy rezerwacji muszą być liczbami.";
+		}
+
+		if (min < 1) {
+			return "Minimalny czas rezerwacji musi być większy niż 0.";
+		}
+
+		if (max < 1) {
+			return "Maksymalny czas rezerwacji musi być większy niż 0.";
+		}
+
+		if (min > max) {
+			return "Minimalny czas nie może być większy niż maksymalny.";
+		}
+
+		return null;
+	}
+
 	async function toggleEquipment(button) {
 		const equipmentId = button.dataset.equipmentId;
 		const nextActive = button.dataset.nextActive === "true";
@@ -178,11 +201,20 @@
 				const id = document.getElementById("editId").value;
 				const startHour = document.getElementById("editDailyStartHour").value;
 				const endHour = document.getElementById("editDailyEndHour").value;
+				const minDuration = document.getElementById("editMinDurationMinutes").value;
+				const maxDuration = document.getElementById("editMaxDurationMinutes").value;
 
 				// Validate opening hours
-				const validationError = validateOpeningHours(startHour, endHour);
-				if (validationError) {
-					alert(validationError);
+				const hoursError = validateOpeningHours(startHour, endHour);
+				if (hoursError) {
+					alert(hoursError);
+					return;
+				}
+
+				// Validate duration
+				const durationError = validateDurationMinutes(minDuration, maxDuration);
+				if (durationError) {
+					alert(durationError);
 					return;
 				}
 
@@ -192,8 +224,8 @@
 					accentColor: document.getElementById("editAccentColor").value,
 					dailyStartHour: startHour,
 					dailyEndHour: endHour,
-					minDurationMinutes: document.getElementById("editMinDurationMinutes").value,
-					maxDurationMinutes: document.getElementById("editMaxDurationMinutes").value
+					minDurationMinutes: minDuration,
+					maxDurationMinutes: maxDuration
 				};
 
 				try {

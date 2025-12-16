@@ -147,6 +147,31 @@ export function validateOpeningHours(startHour: number, endHour: number): Valida
 	return null;
 }
 
+export function validateDurationMinutes(minDuration: number, maxDuration: number): ValidationError | null {
+	if (minDuration < 1) {
+		return {
+			field: "minDurationMinutes",
+			message: "Minimalny czas rezerwacji musi być większy niż 0"
+		};
+	}
+
+	if (maxDuration < 1) {
+		return {
+			field: "maxDurationMinutes",
+			message: "Maksymalny czas rezerwacji musi być większy niż 0"
+		};
+	}
+
+	if (minDuration > maxDuration) {
+		return {
+			field: "minDurationMinutes",
+			message: "Minimalny czas nie może być większy niż maksymalny"
+		};
+	}
+
+	return null;
+}
+
 export function validate(validations: (ValidationError | null)[]): ValidationResult {
 	const errors = validations.filter((error): error is ValidationError => error !== null);
 	return {
