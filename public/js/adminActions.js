@@ -8,6 +8,37 @@
 	const cancelEditBtn = document.getElementById("cancelEdit");
 	const saveEditBtn = document.getElementById("saveEdit");
 
+	function validateOpeningHours(startHour, endHour) {
+		const start = Number(startHour);
+		const end = Number(endHour);
+
+		if (isNaN(start) || isNaN(end)) {
+			return "Godziny muszą być liczbami.";
+		}
+
+		if (start < 0) {
+			return "Godzina otwarcia nie może być ujemna.";
+		}
+
+		if (end < 0) {
+			return "Godzina zamknięcia nie może być ujemna.";
+		}
+
+		if (start > 23) {
+			return "Godzina otwarcia nie może być większa niż 23.";
+		}
+
+		if (end > 23) {
+			return "Godzina zamknięcia nie może być większa niż 23.";
+		}
+
+		if (start >= end) {
+			return "Godzina otwarcia musi być wcześniejsza niż godzina zamknięcia.";
+		}
+
+		return null;
+	}
+
 	async function toggleEquipment(button) {
 		const equipmentId = button.dataset.equipmentId;
 		const nextActive = button.dataset.nextActive === "true";
@@ -145,12 +176,22 @@
 			saveEditBtn.addEventListener("click", async (e) => {
 				e.preventDefault();
 				const id = document.getElementById("editId").value;
+				const startHour = document.getElementById("editDailyStartHour").value;
+				const endHour = document.getElementById("editDailyEndHour").value;
+
+				// Validate opening hours
+				const validationError = validateOpeningHours(startHour, endHour);
+				if (validationError) {
+					alert(validationError);
+					return;
+				}
+
 				const data = {
 					name: document.getElementById("editName").value,
 					iconName: document.getElementById("editIconName").value,
 					accentColor: document.getElementById("editAccentColor").value,
-					dailyStartHour: document.getElementById("editDailyStartHour").value,
-					dailyEndHour: document.getElementById("editDailyEndHour").value,
+					dailyStartHour: startHour,
+					dailyEndHour: endHour,
 					minDurationMinutes: document.getElementById("editMinDurationMinutes").value,
 					maxDurationMinutes: document.getElementById("editMaxDurationMinutes").value
 				};

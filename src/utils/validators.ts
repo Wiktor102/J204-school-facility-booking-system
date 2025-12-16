@@ -108,6 +108,45 @@ export function validateBookingTime(startTime: string, endTime: string, equipmen
 	return null;
 }
 
+export function validateOpeningHours(startHour: number, endHour: number): ValidationError | null {
+	if (startHour < 0) {
+		return {
+			field: "dailyStartHour",
+			message: "Godzina otwarcia nie może być ujemna"
+		};
+	}
+
+	if (endHour < 0) {
+		return {
+			field: "dailyEndHour",
+			message: "Godzina zamknięcia nie może być ujemna"
+		};
+	}
+
+	if (startHour > 23) {
+		return {
+			field: "dailyStartHour",
+			message: "Godzina otwarcia nie może być większa niż 23"
+		};
+	}
+
+	if (endHour > 23) {
+		return {
+			field: "dailyEndHour",
+			message: "Godzina zamknięcia nie może być większa niż 23"
+		};
+	}
+
+	if (startHour >= endHour) {
+		return {
+			field: "dailyStartHour",
+			message: "Godzina otwarcia musi być wcześniejsza niż godzina zamknięcia"
+		};
+	}
+
+	return null;
+}
+
 export function validate(validations: (ValidationError | null)[]): ValidationResult {
 	const errors = validations.filter((error): error is ValidationError => error !== null);
 	return {

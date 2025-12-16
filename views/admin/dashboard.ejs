@@ -39,16 +39,16 @@
         </div>
         <div class="form-grid form-grid--compact">
           <label>Start godziny
-            <input type="number" name="dailyStartHour" min="0" max="23" value="14" />
+            <input type="number" name="dailyStartHour" min="0" max="23" value="14" required />
           </label>
           <label>Koniec godziny
-            <input type="number" name="dailyEndHour" min="0" max="23" value="22" />
+            <input type="number" name="dailyEndHour" min="0" max="23" value="22" required />
           </label>
           <label>Minimalny czas (min)
-            <input type="number" name="minDurationMinutes" value="60" />
+            <input type="number" name="minDurationMinutes" min="0" value="60" required />
           </label>
           <label>Maksymalny czas (min)
-            <input type="number" name="maxDurationMinutes" value="120" />
+            <input type="number" name="maxDurationMinutes" min="0" value="120" required />
           </label>
         </div>
         <button class="btn btn--primary" type="submit">Zapisz</button>
@@ -147,16 +147,16 @@
       </div>
       <div class="form-grid form-grid--compact">
         <label>Start godziny
-          <input type="number" name="dailyStartHour" id="editDailyStartHour" min="0" max="23" />
+          <input type="number" name="dailyStartHour" id="editDailyStartHour" min="0" max="23" required />
         </label>
         <label>Koniec godziny
-          <input type="number" name="dailyEndHour" id="editDailyEndHour" min="0" max="23" />
+          <input type="number" name="dailyEndHour" id="editDailyEndHour" min="0" max="23" required />
         </label>
         <label>Minimalny czas (min)
-          <input type="number" name="minDurationMinutes" id="editMinDurationMinutes" />
+          <input type="number" name="minDurationMinutes" id="editMinDurationMinutes" min="0" required />
         </label>
         <label>Maksymalny czas (min)
-          <input type="number" name="maxDurationMinutes" id="editMaxDurationMinutes" />
+          <input type="number" name="maxDurationMinutes" id="editMaxDurationMinutes" min="0" required />
         </label>
       </div>
       <div style="display: flex; gap: 1rem; margin-top: 1rem; justify-content: flex-end;">

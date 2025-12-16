@@ -4,6 +4,7 @@ import { fileURLToPath } from "url";
 import { AdminService } from "../services/AdminService.js";
 import { EquipmentRepository } from "../repositories/EquipmentRepository.js";
 import { AppError } from "../utils/errors.js";
+import { validateOpeningHours, validate } from "../utils/validators.js";
 import { BaseController, type FormErrorContext } from "./BaseController.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -48,12 +49,22 @@ export class AdminController extends BaseController {
 
 	async createEquipment(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
+			const dailyStartHour = Number(req.body?.dailyStartHour ?? 14);
+			const dailyEndHour = Number(req.body?.dailyEndHour ?? 22);
+
+			// Validate opening hours
+			const hoursValidation = validateOpeningHours(dailyStartHour, dailyEndHour);
+			if (hoursValidation) {
+				const validation = validate([hoursValidation]);
+				throw new AppError(validation.errors[0].message, 400);
+			}
+
 			const payload = {
 				name: req.body?.name,
 				iconName: req.body?.iconName,
 				accentColor: req.body?.accentColor,
-				dailyStartHour: Number(req.body?.dailyStartHour ?? 14),
-				dailyEndHour: Number(req.body?.dailyEndHour ?? 22),
+				dailyStartHour,
+				dailyEndHour,
 				minDurationMinutes: Number(req.body?.minDurationMinutes ?? 60),
 				maxDurationMinutes: Number(req.body?.maxDurationMinutes ?? 120)
 			};
@@ -68,12 +79,24 @@ export class AdminController extends BaseController {
 	async updateEquipment(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
 			const id = Number(req.params.id);
+			const dailyStartHour = this.toOptionalNumber(req.body?.dailyStartHour);
+			const dailyEndHour = this.toOptionalNumber(req.body?.dailyEndHour);
+
+			// Validate opening hours if both are provided
+			if (dailyStartHour !== undefined && dailyEndHour !== undefined) {
+				const hoursValidation = validateOpeningHours(dailyStartHour, dailyEndHour);
+				if (hoursValidation) {
+					const validation = validate([hoursValidation]);
+					throw new AppError(validation.errors[0].message, 400);
+				}
+			}
+
 			const updated = await this.adminService.updateEquipment(id, {
 				name: req.body?.name,
 				iconName: req.body?.iconName,
 				accentColor: req.body?.accentColor,
-				dailyStartHour: this.toOptionalNumber(req.body?.dailyStartHour),
-				dailyEndHour: this.toOptionalNumber(req.body?.dailyEndHour),
+				dailyStartHour,
+				dailyEndHour,
 				minDurationMinutes: this.toOptionalNumber(req.body?.minDurationMinutes),
 				maxDurationMinutes: this.toOptionalNumber(req.body?.maxDurationMinutes),
 				isActive: this.toOptionalBoolean(req.body?.isActive)
