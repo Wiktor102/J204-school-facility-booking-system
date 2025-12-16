@@ -216,12 +216,7 @@ Aplikacja będzie dostępna pod adresem `http://localhost:3000`.
 
 ## 👥 Autorzy
 
-Projekt wykonany jako **projekt szkolny** w ramach przedmiotu INT02.
-
-- **Autor**: Wiktor (GitHub: `Wiktor102`)
-- **Rola**: implementacja backendu, frontend (EJS + SCSS), konfiguracja bazy danych oraz kontenerów Docker.
-
-Wszelkie sugestie dotyczące usprawnień, nowych funkcjonalności lub poprawek mile widziane poprzez zgłoszenia (Issues) w repozytorium GitHub.
+Wiktor Golicz
 
 ## Licencja 📑
 
